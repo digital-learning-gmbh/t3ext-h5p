@@ -15,8 +15,7 @@
  * @copyright  2016 Joubel AS
  * @license    MIT
  */
-class H5PDefaultStorage implements H5PFileStorage
-{
+class H5PDefaultStorage implements \H5PFileStorage {
   private $path, $alteditorpath;
 
   /**
@@ -40,10 +39,10 @@ class H5PDefaultStorage implements H5PFileStorage
    *  Library properties
    */
   public function saveLibrary($library) {
-    $dest = $this->path . '/libraries/' . H5PCore::libraryToFolderName($library);
+    $dest = $this->path . '/libraries/' . \H5PCore::libraryToFolderName($library);
 
     // Make sure destination dir doesn't exist
-    H5PCore::deleteFileTree($dest);
+    \H5PCore::deleteFileTree($dest);
 
     // Move library folder
     self::copyFileTree($library['uploadDirectory'], $dest);
@@ -65,7 +64,7 @@ class H5PDefaultStorage implements H5PFileStorage
     $dest = "{$this->path}/content/{$content['id']}";
 
     // Remove any old content
-    H5PCore::deleteFileTree($dest);
+    \H5PCore::deleteFileTree($dest);
 
     self::copyFileTree($source, $dest);
   }
@@ -77,7 +76,7 @@ class H5PDefaultStorage implements H5PFileStorage
    *  Content properties
    */
   public function deleteContent($content) {
-    H5PCore::deleteFileTree("{$this->path}/content/{$content['id']}");
+    \H5PCore::deleteFileTree("{$this->path}/content/{$content['id']}");
   }
 
   /**
@@ -138,10 +137,14 @@ class H5PDefaultStorage implements H5PFileStorage
    *  Folder that library resides in
    */
   public function exportLibrary($library, $target, $developmentPath=NULL) {
-    $folder = H5PCore::libraryToFolderName($library);
+    $srcFolder = \H5PCore::libraryToFolderName($library);
+    $srcPath = ($developmentPath === NULL ? "/libraries/{$srcFolder}" : $developmentPath);
 
-    $srcPath = ($developmentPath === NULL ? "/libraries/{$folder}" : $developmentPath);
-    self::copyFileTree("{$this->path}{$srcPath}", "{$target}/{$folder}");
+    // Library folders inside the H5P zip file shall not contain patch version in the folder name
+    $library['patchVersionInFolderName'] = false;
+    $destinationFolder = \H5PCore::libraryToFolderName($library);
+
+    self::copyFileTree("{$this->path}{$srcPath}", "{$target}/{$destinationFolder}");
   }
 
   /**
@@ -298,7 +301,7 @@ class H5PDefaultStorage implements H5PFileStorage
    * Save files uploaded through the editor.
    * The files must be marked as temporary until the content form is saved.
    *
-   * @param H5peditorFile $file
+   * @param \H5peditorFile $file
    * @param int $contentid
    */
   public function saveFile($file, $contentId) {
@@ -508,7 +511,7 @@ class H5PDefaultStorage implements H5PFileStorage
    */
   private static function copyFileTree($source, $destination) {
     if (!self::dirReady($destination)) {
-      throw new Exception('unabletocopy');
+      throw new \Exception('unabletocopy');
     }
 
     $ignoredFiles = self::getIgnoredFiles("{$source}/.h5pignore");
@@ -516,7 +519,7 @@ class H5PDefaultStorage implements H5PFileStorage
     $dir = opendir($source);
     if ($dir === FALSE) {
       trigger_error('Unable to open directory ' . $source, E_USER_WARNING);
-      throw new Exception('unabletocopy');
+      throw new \Exception('unabletocopy');
     }
 
     while (false !== ($file = readdir($dir))) {
