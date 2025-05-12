@@ -1,19 +1,8 @@
 <?php
 namespace MichielRoos\H5p\ViewHelpers\Form;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use TYPO3\CMS\Fluid\ViewHelpers\Form\AbstractFormFieldViewHelper;
+use TYPO3Fluid\Fluid\Core\Exception;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Property\PropertyMapper;
 use TYPO3\CMS\Extbase\Security\Cryptography\HashService;
@@ -21,43 +10,43 @@ use TYPO3\CMS\Extbase\Security\Cryptography\HashService;
 /**
  * Class UploadViewHelper
  */
-class UploadViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Form\UploadViewHelper
+class UploadViewHelper extends AbstractFormFieldViewHelper
 {
     /**
-     * @var \TYPO3\CMS\Extbase\Security\Cryptography\HashService
+     * @var HashService
      */
     protected $hashService;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Property\PropertyMapper
+     * @var PropertyMapper
      */
     protected $propertyMapper;
-    
+
     /**
-     * @param \TYPO3\CMS\Extbase\Security\Cryptography\HashService $hashService
+     * @param HashService $hashService
      */
-    public function injectHashService(HashService $hashService)
+    public function injectHashService(HashService $hashService): void
     {
         $this->hashService = $hashService;
     }
 
     /**
-     * @param \TYPO3\CMS\Extbase\Property\PropertyMapper $propertyMapper
+     * @param PropertyMapper $propertyMapper
      */
-    public function injectPropertyMapper(PropertyMapper $propertyMapper)
+    public function injectPropertyMapper(PropertyMapper $propertyMapper): void
     {
         $this->propertyMapper = $propertyMapper;
     }
-    
+
     /**
      * Render the upload field including possible resource pointer
      *
      * @return string
-     * @throws \TYPO3\CMS\Fluid\Core\ViewHelper\Exception\InvalidVariableException
+     * @throws Exception
      * @throws \TYPO3\CMS\Extbase\Property\Exception
      * @api
      */
-    public function render()
+    public function render(): string
     {
         $output = '';
         $resource = $this->getUploadedResource();
@@ -85,10 +74,10 @@ class UploadViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Form\UploadViewHelpe
      * Return a previously uploaded resource.
      * Return NULL if errors occurred during property mapping for this property.
      *
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @return FileReference
      * @throws \TYPO3\CMS\Extbase\Property\Exception
      */
-    protected function getUploadedResource()
+    protected function getUploadedResource(): ?FileReference
     {
         if ($this->getMappingResultsForProperty()->hasErrors()) {
             return null;

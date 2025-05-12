@@ -1,44 +1,32 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /**
  * Class LibraryDependency
  * @package MichielRoos\H5p\Domain\Model
  */
-class LibraryDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class LibraryDependency extends AbstractEntity
 {
     /**
-     * @var \MichielRoos\H5p\Domain\Model\Library
+     * @var Library
      */
-    protected $library;
+    protected Library $library;
 
     /**
-     * @var \MichielRoos\H5p\Domain\Model\Library
+     * @var Library
      */
-    protected $requiredLibrary;
+    protected Library $requiredLibrary;
 
     /**
      * @var string
      */
-    protected $dependencyType;
+    protected string $dependencyType;
 
     /**
      * LibraryDependency constructor.
-     * @param \MichielRoos\H5p\Domain\Model\Library $library
-     * @param \MichielRoos\H5p\Domain\Model\Library $requiredLibrary
+     * @param Library $library
+     * @param Library $requiredLibrary
      * @param string $dependencyType
      */
     public function __construct(Library $library, Library $requiredLibrary, string $dependencyType)
@@ -49,33 +37,33 @@ class LibraryDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * @return \MichielRoos\H5p\Domain\Model\Library
+     * @return Library
      */
-    public function getLibrary()
+    public function getLibrary(): Library
     {
         return $this->library;
     }
 
     /**
-     * @param \MichielRoos\H5p\Domain\Model\Library $library
+     * @param Library $library
      */
-    public function setLibrary(Library $library)
+    public function setLibrary(Library $library): void
     {
         $this->library = $library;
     }
 
     /**
-     * @return \MichielRoos\H5p\Domain\Model\Library
+     * @return Library
      */
-    public function getRequiredLibrary()
+    public function getRequiredLibrary(): Library
     {
         return $this->requiredLibrary;
     }
 
     /**
-     * @param \MichielRoos\H5p\Domain\Model\Library $requiredLibrary
+     * @param Library $requiredLibrary
      */
-    public function setRequiredLibrary(Library $requiredLibrary)
+    public function setRequiredLibrary(Library $requiredLibrary): void
     {
         $this->requiredLibrary = $requiredLibrary;
     }
@@ -83,7 +71,7 @@ class LibraryDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return string
      */
-    public function getDependencyType()
+    public function getDependencyType(): string
     {
         return $this->dependencyType;
     }
@@ -91,7 +79,7 @@ class LibraryDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param string $dependencyType
      */
-    public function setDependencyType(string $dependencyType)
+    public function setDependencyType(string $dependencyType): void
     {
         $this->dependencyType = $dependencyType;
     }

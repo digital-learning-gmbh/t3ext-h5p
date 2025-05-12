@@ -1,25 +1,20 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
-class ConfigSetting extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+class ConfigSetting extends AbstractEntity
 {
 
-    /**
-     * @var string
-     */
-    protected $configKey;
+    protected ?string $configKey = '';
 
-    /**
-     * @var string
-     */
-    protected $configValue;
+    protected ?string $configValue = '';
 
     /**
      * ConfigSetting constructor.
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      */
-    public function __construct(string $key, string $value)
+    public function __construct(string $key = '', mixed $value = '')
     {
         $this->configKey = $key;
         $this->configValue = $value;
@@ -28,7 +23,7 @@ class ConfigSetting extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return string
      */
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return $this->configKey;
     }
@@ -36,7 +31,7 @@ class ConfigSetting extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param string $configKey
      */
-    public function setConfigKey(string $configKey)
+    public function setConfigKey(string $configKey): void
     {
         $this->configKey = $configKey;
     }
@@ -44,7 +39,7 @@ class ConfigSetting extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return string
      */
-    public function getConfigValue()
+    public function getConfigValue(): string
     {
         return $this->configValue;
     }
@@ -52,7 +47,7 @@ class ConfigSetting extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param string $configValue
      */
-    public function setConfigValue(string $configValue)
+    public function setConfigValue(string $configValue): void
     {
         $this->configValue = $configValue;
     }

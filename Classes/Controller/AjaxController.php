@@ -1,23 +1,16 @@
 <?php
 namespace MichielRoos\H5p\Controller;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Context\Context;
+use Psr\Http\Message\ResponseInterface;
 use MichielRoos\H5p\Domain\Model\Content;
 use MichielRoos\H5p\Domain\Model\ContentResult;
 use MichielRoos\H5p\Domain\Repository\ContentRepository;
 use MichielRoos\H5p\Domain\Repository\ContentResultRepository;
+use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Repository\FrontendUserRepository;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -31,9 +24,9 @@ class AjaxController extends ActionController
     /**
      * Content repository
      *
-     * @var \MichielRoos\H5p\Domain\Repository\ContentRepository
+     * @var ContentRepository
      */
-    protected $contentRepository;
+    protected ContentRepository $contentRepository;
 
     /**
      * @var string
@@ -43,7 +36,7 @@ class AjaxController extends ActionController
     /**
      * Finish action
      */
-    public function finishAction()
+    public function finishAction(): void
     {
         $user = null;
 
@@ -54,14 +47,14 @@ class AjaxController extends ActionController
             'details'    => 'No user is logged in'
         ];
 
-        if ($GLOBALS['TSFE']->loginUser) {
+        if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             $user = $GLOBALS['TSFE']->fe_user->user;
             $postData = GeneralUtility::_POST();
             if (!array_key_exists('time', $postData)) {
                 $postData['time'] = 0;
             }
 
-            $contentRepository = $this->objectManager->get(ContentRepository::class);
+            $contentRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ContentRepository::class);
 
             $content = $contentRepository->findByUid($postData['contentId']);
             if (!$content instanceof Content) {
@@ -70,10 +63,10 @@ class AjaxController extends ActionController
                 exit;
             }
 
-            $frontendUserRepository = $this->objectManager->get(FrontendUserRepository::class);
+            $frontendUserRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(FrontendUserRepository::class);
             $frontendUser = $frontendUserRepository->findByUid((int)$user['uid']);
 
-            $contentResultRepository = $this->objectManager->get(ContentResultRepository::class);
+            $contentResultRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(ContentResultRepository::class);
 
             /** @var ContentResult $existingContentResult */
             $existingContentResult = $contentResultRepository->findOneByUserAndContentId($user['uid'], $postData['contentId']);
@@ -89,7 +82,7 @@ class AjaxController extends ActionController
                 $contentResult->setPid($GLOBALS['TSFE']->id);
                 $contentResultRepository->add($contentResult);
             }
-            $persistenceManager = $this->objectManager->get(PersistenceManager::class);
+            $persistenceManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(PersistenceManager::class);
             $persistenceManager->persistAll();
             \H5PCore::ajaxSuccess();
             exit;
@@ -101,17 +94,30 @@ class AjaxController extends ActionController
     /**
      * Finish action
      */
-    public function contentUserDataAction()
+    public function contentUserDataAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
     /**
      * Returns an instance of LanguageService
      *
-     * @return \TYPO3\CMS\Lang\LanguageService
+     * @return LanguageService
      */
-    protected function getLanguageService()
+    protected function getLanguageService(): LanguageService
     {
-        return $GLOBALS['LANG'];
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        if ($request instanceof ServerRequestInterface && ApplicationType::fromRequest($request)->isFrontend()) {
+            $languageServiceFactory = GeneralUtility::makeInstance(LanguageServiceFactory::class);
+            return $languageServiceFactory->createFromSiteLanguage($request->getAttribute('language')
+                ?? $request->getAttribute('site')->getDefaultLanguage());
+        }
+
+        if (($GLOBALS['LANG'] ?? null) instanceof LanguageService) {
+            return $GLOBALS['LANG'];
+        }
+
+        $languageServiceFactory = GeneralUtility::makeInstance(LanguageServiceFactory::class);
+        return $languageServiceFactory->createFromUserPreferences($GLOBALS['BE_USER'] ?? null);
     }
 }

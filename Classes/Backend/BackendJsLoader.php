@@ -1,6 +1,9 @@
 <?php
+
 namespace MichielRoos\H5p\Backend;
 
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -9,9 +12,12 @@ class BackendJsLoader
     /**
      * Load require JS modules
      */
-    public function loadJsModules()
+    public function loadJsModules(): void
     {
-        if (TYPO3_MODE !== 'BE') {
+        // Only evaluate this in the backend
+        if (!($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+            || !ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()
+        ) {
             return;
         }
 

@@ -1,19 +1,7 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
-
+use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
@@ -24,51 +12,51 @@ class ContentResult extends AbstractEntity
 {
 
     /**
-     * @var \MichielRoos\H5p\Domain\Model\Content
+     * @var Content
      */
-    protected $content;
+    protected Content $content;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+     * @var FrontendUser
      */
-    protected $user;
-
-    /**
-     * @var integer
-     */
-    protected $score;
+    protected FrontendUser $user;
 
     /**
      * @var integer
      */
-    protected $maxScore;
+    protected int $score;
 
     /**
      * @var integer
      */
-    protected $opened;
+    protected int $maxScore;
 
     /**
      * @var integer
      */
-    protected $finished;
+    protected int $opened;
 
     /**
      * @var integer
      */
-    protected $time;
+    protected int $finished;
+
+    /**
+     * @var integer
+     */
+    protected int $time;
 
     /**
      * ContentResult constructor.
-     * @param \MichielRoos\H5p\Domain\Model\Content $content
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user
+     * @param Content $content
+     * @param FrontendUser $user
      * @param int $score
      * @param int $maxScore
      * @param int $opened
      * @param int $finished
      * @param int $time
      */
-    public function __construct(\MichielRoos\H5p\Domain\Model\Content $content, \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user, int $score, int $maxScore, int $opened, int $finished, int $time = 0)
+    public function __construct(Content $content, FrontendUser $user, int $score, int $maxScore, int $opened, int $finished, int $time = 0)
     {
         $this->setContent($content);
         $this->setUser($user);
@@ -80,7 +68,7 @@ class ContentResult extends AbstractEntity
     }
 
     /**
-     * @return \MichielRoos\H5p\Domain\Model\Content
+     * @return Content
      */
     public function getContent(): Content
     {
@@ -88,25 +76,25 @@ class ContentResult extends AbstractEntity
     }
 
     /**
-     * @param \MichielRoos\H5p\Domain\Model\Content $content
+     * @param Content $content
      */
-    public function setContent(Content $content)
+    public function setContent(Content $content): void
     {
         $this->content = $content;
     }
 
     /**
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+     * @return FrontendUser
      */
-    public function getUser(): \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
+    public function getUser(): FrontendUser
     {
         return $this->user;
     }
 
     /**
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user
+     * @param FrontendUser $user
      */
-    public function setUser(\TYPO3\CMS\Extbase\Domain\Model\FrontendUser $user)
+    public function setUser(FrontendUser $user): void
     {
         $this->user = $user;
     }
@@ -114,7 +102,7 @@ class ContentResult extends AbstractEntity
     /**
      * @return int
      */
-    public function getScore()
+    public function getScore(): int
     {
         return $this->score;
     }
@@ -122,7 +110,7 @@ class ContentResult extends AbstractEntity
     /**
      * @param int $score
      */
-    public function setScore(int $score)
+    public function setScore(int $score): void
     {
         $this->score = $score;
     }
@@ -130,7 +118,7 @@ class ContentResult extends AbstractEntity
     /**
      * @return int
      */
-    public function getMaxScore()
+    public function getMaxScore(): int
     {
         return $this->maxScore;
     }
@@ -138,7 +126,7 @@ class ContentResult extends AbstractEntity
     /**
      * @param int $maxScore
      */
-    public function setMaxScore(int $maxScore)
+    public function setMaxScore(int $maxScore): void
     {
         $this->maxScore = $maxScore;
     }
@@ -146,7 +134,7 @@ class ContentResult extends AbstractEntity
     /**
      * @return int
      */
-    public function getOpened()
+    public function getOpened(): int
     {
         return $this->opened;
     }
@@ -154,7 +142,7 @@ class ContentResult extends AbstractEntity
     /**
      * @param int $opened
      */
-    public function setOpened(int $opened)
+    public function setOpened(int $opened): void
     {
         $this->opened = $opened;
     }
@@ -162,7 +150,7 @@ class ContentResult extends AbstractEntity
     /**
      * @return int
      */
-    public function getFinished()
+    public function getFinished(): int
     {
         return $this->finished;
     }
@@ -170,7 +158,7 @@ class ContentResult extends AbstractEntity
     /**
      * @param int $finished
      */
-    public function setFinished(int $finished)
+    public function setFinished(int $finished): void
     {
         $this->finished = $finished;
     }
@@ -178,7 +166,7 @@ class ContentResult extends AbstractEntity
     /**
      * @return int
      */
-    public function getTime()
+    public function getTime(): int
     {
         return $this->time;
     }
@@ -186,7 +174,7 @@ class ContentResult extends AbstractEntity
     /**
      * @param int $time
      */
-    public function setTime(int $time)
+    public function setTime(int $time): void
     {
         $this->time = $time;
     }
@@ -195,7 +183,7 @@ class ContentResult extends AbstractEntity
      * @return string
      * @throws \Exception
      */
-    public function getFormattedTimeInterval()
+    public function getFormattedTimeInterval(): string
     {
         return $this->getFinishedDateTime()->diff($this->getOpenedDateTime())->format("%H:%M:%S");
     }
@@ -204,7 +192,7 @@ class ContentResult extends AbstractEntity
      * @return \DateTime
      * @throws \Exception
      */
-    public function getFinishedDateTime()
+    public function getFinishedDateTime(): \DateTime
     {
         $datetime = new \DateTime();
         $datetime->setTimestamp($this->finished);
@@ -215,7 +203,7 @@ class ContentResult extends AbstractEntity
      * @return \DateTime
      * @throws \Exception
      */
-    public function getOpenedDateTime()
+    public function getOpenedDateTime(): \DateTime
     {
         $datetime = new \DateTime();
         $datetime->setTimestamp($this->opened);

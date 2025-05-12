@@ -1,40 +1,31 @@
 <?php
+
 namespace MichielRoos\H5p\Domain\Model;
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
+
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
  * Class LibraryTranslation
  * @package MichielRoos\H5p\Domain\Model
  */
-class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class LibraryTranslation extends AbstractEntity
 {
     /**
-     * @var \MichielRoos\H5p\Domain\Model\Library
+     * @var Library
      */
-    protected $library;
+    protected Library $library;
 
     /**
      * @var string
      */
-    protected $languageCode;
+    protected string $languageCode;
 
     /**
      * @var string
      */
-    protected $translation;
+    protected string $translation;
 
-    public static function create(Library $library, $languageCode, $translation)
+    public static function create(Library $library, $languageCode, $translation): LibraryTranslation
     {
         $translationInstance = new LibraryTranslation();
         $translationInstance->setLibrary($library);
@@ -44,17 +35,17 @@ class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * @return \MichielRoos\H5p\Domain\Model\Library
+     * @return Library
      */
-    public function getLibrary()
+    public function getLibrary(): Library
     {
         return $this->library;
     }
 
     /**
-     * @param \MichielRoos\H5p\Domain\Model\Library $library
+     * @param Library $library
      */
-    public function setLibrary(Library $library)
+    public function setLibrary(Library $library): void
     {
         $this->library = $library;
     }
@@ -62,7 +53,7 @@ class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return string
      */
-    public function getLanguageCode()
+    public function getLanguageCode(): string
     {
         return $this->languageCode;
     }
@@ -70,7 +61,7 @@ class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param string $languageCode
      */
-    public function setLanguageCode($languageCode)
+    public function setLanguageCode(string $languageCode): void
     {
         $this->languageCode = $languageCode;
     }
@@ -78,7 +69,7 @@ class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return string
      */
-    public function getTranslation()
+    public function getTranslation(): string
     {
         return $this->translation;
     }
@@ -86,7 +77,7 @@ class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param string $translation
      */
-    public function setTranslation($translation)
+    public function setTranslation(string $translation): void
     {
         $this->translation = $translation;
     }

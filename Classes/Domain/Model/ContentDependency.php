@@ -1,36 +1,37 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /**
  * Class ContentDependency
  * @package \MichielRoos\H5p\Domain\Model
  */
-class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
+class ContentDependency extends AbstractEntity
 {
     /**
-     * @var \MichielRoos\H5p\Domain\Model\Content
+     * @var Content
      */
-    protected $content;
+    protected Content $content;
 
     /**
-     * @var \MichielRoos\H5p\Domain\Model\Library
+     * @var Library
      */
-    protected $library;
+    protected Library $library;
 
     /**
      * @var string
      */
-    protected $dependencyType;
+    protected string $dependencyType;
 
     /**
      * @var integer
      */
-    protected $weight;
+    protected int $weight;
 
     /**
      * @var bool
      */
-    protected $dropCss;
+    protected bool $dropCss;
 
     /**
      * Returns an assoc array as expected by
@@ -38,7 +39,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      *
      * @return array
      */
-    public function toAssocArray()
+    public function toAssocArray(): array
     {
         // Not all fields from library are expected in this array, but we dont expect conflicts here.
         $libraryData = $this->getLibrary()->toAssocArray();
@@ -49,33 +50,33 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     }
 
     /**
-     * @return \MichielRoos\H5p\Domain\Model\Content
+     * @return Content
      */
-    public function getContent()
+    public function getContent(): Content
     {
         return $this->content;
     }
 
     /**
-     * @param \MichielRoos\H5p\Domain\Model\Content $content
+     * @param Content $content
      */
-    public function setContent(Content $content)
+    public function setContent(Content $content): void
     {
         $this->content = $content;
     }
 
     /**
-     * @return \MichielRoos\H5p\Domain\Model\Library
+     * @return Library
      */
-    public function getLibrary()
+    public function getLibrary(): Library
     {
         return $this->library;
     }
 
     /**
-     * @param \MichielRoos\H5p\Domain\Model\Library $library
+     * @param Library $library
      */
-    public function setLibrary(Library $library)
+    public function setLibrary(Library $library): void
     {
         $this->library = $library;
     }
@@ -83,7 +84,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return string
      */
-    public function getDependencyType()
+    public function getDependencyType(): string
     {
         return $this->dependencyType;
     }
@@ -91,7 +92,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param string $dependencyType
      */
-    public function setDependencyType(string $dependencyType)
+    public function setDependencyType(string $dependencyType): void
     {
         $this->dependencyType = $dependencyType;
     }
@@ -99,7 +100,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return int
      */
-    public function getWeight()
+    public function getWeight(): int
     {
         return $this->weight;
     }
@@ -107,7 +108,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param int $weight
      */
-    public function setWeight(int $weight)
+    public function setWeight(int $weight): void
     {
         $this->weight = $weight;
     }
@@ -115,7 +116,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return bool
      */
-    public function isDropCss()
+    public function isDropCss(): bool
     {
         return $this->dropCss;
     }
@@ -123,7 +124,7 @@ class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @param bool $dropCss
      */
-    public function setDropCss(bool $dropCss)
+    public function setDropCss(bool $dropCss): void
     {
         $this->dropCss = $dropCss;
     }
