@@ -1,9 +1,19 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
-use DateTime;
-use stdClass;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
@@ -71,12 +81,12 @@ class ContentTypeCacheEntry extends AbstractEntity
     protected $icon;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $createdAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     protected $updatedAt;
 
@@ -125,7 +135,7 @@ class ContentTypeCacheEntry extends AbstractEntity
      */
     protected $owner;
 
-    public static function create(stdClass $contentTypeCacheObject)
+    public static function create(\stdClass $contentTypeCacheObject)
     {
         $entry = new ContentTypeCacheEntry();
         $entry->setMachineName($contentTypeCacheObject->id);
@@ -138,8 +148,8 @@ class ContentTypeCacheEntry extends AbstractEntity
         $entry->setSummary($contentTypeCacheObject->summary);
         $entry->setDescription($contentTypeCacheObject->description);
         $entry->setIcon($contentTypeCacheObject->icon);
-        $entry->setCreatedAt(new DateTime($contentTypeCacheObject->createdAt));
-        $entry->setUpdatedAt(new DateTime($contentTypeCacheObject->updatedAt));
+        $entry->setCreatedAt(new \DateTime($contentTypeCacheObject->createdAt));
+        $entry->setUpdatedAt(new \DateTime($contentTypeCacheObject->updatedAt));
         $entry->setIsRecommended($contentTypeCacheObject->isRecommended);
         $entry->setPopularity($contentTypeCacheObject->popularity);
         $entry->setScreenshots(json_encode($contentTypeCacheObject->screenshots));
@@ -154,7 +164,7 @@ class ContentTypeCacheEntry extends AbstractEntity
 
     /**
      * Returns the library cache entry in a format that H5P expects.
-     * @return stdClass
+     * @return \stdClass
      */
     public function toStdClass()
     {
@@ -191,7 +201,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $machineName
      */
-    public function setMachineName(string $machineName): void
+    public function setMachineName(string $machineName)
     {
         $this->machineName = $machineName;
     }
@@ -207,7 +217,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param int $majorVersion
      */
-    public function setMajorVersion(int $majorVersion): void
+    public function setMajorVersion(int $majorVersion)
     {
         $this->majorVersion = $majorVersion;
     }
@@ -223,7 +233,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param int $minorVersion
      */
-    public function setMinorVersion(int $minorVersion): void
+    public function setMinorVersion(int $minorVersion)
     {
         $this->minorVersion = $minorVersion;
     }
@@ -239,7 +249,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param int $patchVersion
      */
-    public function setPatchVersion(int $patchVersion): void
+    public function setPatchVersion(int $patchVersion)
     {
         $this->patchVersion = $patchVersion;
     }
@@ -255,7 +265,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param int $h5pMajorVersion
      */
-    public function setH5pMajorVersion(int $h5pMajorVersion): void
+    public function setH5pMajorVersion(int $h5pMajorVersion)
     {
         $this->h5pMajorVersion = $h5pMajorVersion;
     }
@@ -271,7 +281,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param int $h5pMinorVersion
      */
-    public function setH5pMinorVersion(int $h5pMinorVersion): void
+    public function setH5pMinorVersion(int $h5pMinorVersion)
     {
         $this->h5pMinorVersion = $h5pMinorVersion;
     }
@@ -287,7 +297,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
@@ -303,7 +313,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $summary
      */
-    public function setSummary(string $summary): void
+    public function setSummary(string $summary)
     {
         $this->summary = $summary;
     }
@@ -319,7 +329,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -335,13 +345,13 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $icon
      */
-    public function setIcon(string $icon): void
+    public function setIcon(string $icon)
     {
         $this->icon = $icon;
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -349,15 +359,15 @@ class ContentTypeCacheEntry extends AbstractEntity
     }
 
     /**
-     * @param DateTime $createdAt
+     * @param \DateTime $createdAt
      */
-    public function setCreatedAt(DateTime $createdAt): void
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -365,9 +375,9 @@ class ContentTypeCacheEntry extends AbstractEntity
     }
 
     /**
-     * @param DateTime $updatedAt
+     * @param \DateTime $updatedAt
      */
-    public function setUpdatedAt(DateTime $updatedAt): void
+    public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
     }
@@ -383,7 +393,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param bool $isRecommended
      */
-    public function setIsRecommended(bool $isRecommended): void
+    public function setIsRecommended(bool $isRecommended)
     {
         $this->isRecommended = $isRecommended;
     }
@@ -399,7 +409,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param int $popularity
      */
-    public function setPopularity(int $popularity): void
+    public function setPopularity(int $popularity)
     {
         $this->popularity = $popularity;
     }
@@ -415,7 +425,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $screenshots
      */
-    public function setScreenshots(string $screenshots): void
+    public function setScreenshots(string $screenshots)
     {
         $this->screenshots = $screenshots;
     }
@@ -431,7 +441,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $license
      */
-    public function setLicense(string $license): void
+    public function setLicense(string $license)
     {
         $this->license = $license;
     }
@@ -447,7 +457,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $example
      */
-    public function setExample(string $example): void
+    public function setExample(string $example)
     {
         $this->example = $example;
     }
@@ -463,7 +473,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $tutorial
      */
-    public function setTutorial(string $tutorial): void
+    public function setTutorial(string $tutorial)
     {
         $this->tutorial = $tutorial;
     }
@@ -479,7 +489,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $keywords
      */
-    public function setKeywords(string $keywords): void
+    public function setKeywords(string $keywords)
     {
         $this->keywords = $keywords;
     }
@@ -495,7 +505,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $categories
      */
-    public function setCategories(string $categories): void
+    public function setCategories(string $categories)
     {
         $this->categories = $categories;
     }
@@ -511,7 +521,7 @@ class ContentTypeCacheEntry extends AbstractEntity
     /**
      * @param string $owner
      */
-    public function setOwner(string $owner): void
+    public function setOwner(string $owner)
     {
         $this->owner = $owner;
     }

@@ -1,31 +1,40 @@
 <?php
-
 namespace MichielRoos\H5p\Domain\Model;
-
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
 /**
  * Class LibraryTranslation
  * @package MichielRoos\H5p\Domain\Model
  */
-class LibraryTranslation extends AbstractEntity
+class LibraryTranslation extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
     /**
-     * @var Library
+     * @var \MichielRoos\H5p\Domain\Model\Library
      */
-    protected Library $library;
+    protected $library;
 
     /**
      * @var string
      */
-    protected string $languageCode;
+    protected $languageCode;
 
     /**
      * @var string
      */
-    protected string $translation;
+    protected $translation;
 
-    public static function create(Library $library, $languageCode, $translation): LibraryTranslation
+    public static function create(Library $library, $languageCode, $translation)
     {
         $translationInstance = new LibraryTranslation();
         $translationInstance->setLibrary($library);
@@ -35,17 +44,17 @@ class LibraryTranslation extends AbstractEntity
     }
 
     /**
-     * @return Library
+     * @return \MichielRoos\H5p\Domain\Model\Library
      */
-    public function getLibrary(): Library
+    public function getLibrary()
     {
         return $this->library;
     }
 
     /**
-     * @param Library $library
+     * @param \MichielRoos\H5p\Domain\Model\Library $library
      */
-    public function setLibrary(Library $library): void
+    public function setLibrary(Library $library)
     {
         $this->library = $library;
     }
@@ -53,7 +62,7 @@ class LibraryTranslation extends AbstractEntity
     /**
      * @return string
      */
-    public function getLanguageCode(): string
+    public function getLanguageCode()
     {
         return $this->languageCode;
     }
@@ -61,7 +70,7 @@ class LibraryTranslation extends AbstractEntity
     /**
      * @param string $languageCode
      */
-    public function setLanguageCode(string $languageCode): void
+    public function setLanguageCode($languageCode)
     {
         $this->languageCode = $languageCode;
     }
@@ -69,7 +78,7 @@ class LibraryTranslation extends AbstractEntity
     /**
      * @return string
      */
-    public function getTranslation(): string
+    public function getTranslation()
     {
         return $this->translation;
     }
@@ -77,7 +86,7 @@ class LibraryTranslation extends AbstractEntity
     /**
      * @param string $translation
      */
-    public function setTranslation(string $translation): void
+    public function setTranslation($translation)
     {
         $this->translation = $translation;
     }

@@ -1,6 +1,18 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -15,24 +27,24 @@ class CachedAsset extends AbstractEntity
 {
 
     /**
-     * @var File
+     * @var \TYPO3\CMS\Core\Resource\File
      */
-    protected File $resource;
+    protected $resource;
 
     /**
-     * @var ObjectStorage<Library>
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<Library>
      */
-    protected ObjectStorage $libraries;
-
-    /**
-     * @var string
-     */
-    protected string $hashKey;
+    protected $libraries;
 
     /**
      * @var string
      */
-    protected string $type;
+    protected $hashKey;
+
+    /**
+     * @var string
+     */
+    protected $type;
 
     public function __construct()
     {
@@ -40,7 +52,7 @@ class CachedAsset extends AbstractEntity
     }
 
     /**
-     * @return File
+     * @return \TYPO3\CMS\Core\Resource\File
      */
     public function getResource(): File
     {
@@ -48,25 +60,25 @@ class CachedAsset extends AbstractEntity
     }
 
     /**
-     * @param File $resource
+     * @param \TYPO3\CMS\Core\Resource\File $resource
      */
-    public function setResource(File $resource): void
+    public function setResource(File $resource)
     {
         $this->resource = $resource;
     }
 
     /**
-     * @return ObjectStorage
+     * @return \TYPO3\CMS\Extbase\Persistence\ObjectStorage
      */
-    public function getLibraries(): ObjectStorage
+    public function getLibraries()
     {
         return $this->libraries;
     }
 
     /**
-     * @param ObjectStorage $libraries
+     * @param \TYPO3\CMS\Extbase\Persistence\ObjectStorage $libraries
      */
-    public function setLibraries(ObjectStorage $libraries): void
+    public function setLibraries(ObjectStorage $libraries)
     {
         $this->libraries = $libraries;
     }
@@ -74,7 +86,7 @@ class CachedAsset extends AbstractEntity
     /**
      * @param Library $library
      */
-    public function addLibrary(Library $library): void
+    public function addLibrary(Library $library)
     {
         $this->libraries->attach($library);
     }
@@ -82,7 +94,7 @@ class CachedAsset extends AbstractEntity
     /**
      * @return string
      */
-    public function getHashKey(): string
+    public function getHashKey()
     {
         return $this->hashKey;
     }
@@ -90,7 +102,7 @@ class CachedAsset extends AbstractEntity
     /**
      * @param string $hashKey
      */
-    public function setHashKey(string $hashKey): void
+    public function setHashKey(string $hashKey)
     {
         $this->hashKey = $hashKey;
     }
@@ -98,7 +110,7 @@ class CachedAsset extends AbstractEntity
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType()
     {
         return $this->type;
     }
@@ -106,7 +118,7 @@ class CachedAsset extends AbstractEntity
     /**
      * @param string $type
      */
-    public function setType(string $type): void
+    public function setType(string $type)
     {
         $this->type = $type;
     }

@@ -1,15 +1,14 @@
 <?php
 
-use MichielRoos\H5p\Backend\TCA;
-
 return [
     'ctrl'     => [
         'hideTable'      => true,
         'title'          => 'LLL:EXT:h5p/Resources/Private/Language/locallang.xlf:tx_h5p_domain_model_librarydependency',
         'label'          => 'library',
-        'label_userFunc' => TCA::class . '->getLibraryDependencyTitle',
+        'label_userFunc' => \MichielRoos\H5p\Backend\TCA::class . '->getLibraryDependencyTitle',
         'tstamp'         => 'tstamp',
         'crdate'         => 'crdate',
+        'dividers2tabs'  => true,
         'enablecolumns'  => [
             'disabled' => 'hidden',
         ],
@@ -21,7 +20,7 @@ return [
     'columns'  => [
         'hidden'           => [
             'exclude' => 1,
-            'label'   => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
+            'label'   => 'LLL:EXT:lang/locallang_general.xlf:LGL.hidden',
             'config'  => [
                 'type' => 'check'
             ]

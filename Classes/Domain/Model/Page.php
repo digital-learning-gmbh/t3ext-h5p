@@ -1,18 +1,30 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 /**
  * Class Page
  */
-class Page extends AbstractEntity
+class Page extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
     /**
      * Title
      *
      * @var string
      */
-    protected string $title = '';
+    protected $title = '';
 
     /**
      * @return string
@@ -25,7 +37,7 @@ class Page extends AbstractEntity
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title)
     {
         $this->title = $title;
     }
