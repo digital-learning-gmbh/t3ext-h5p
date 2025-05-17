@@ -1,142 +1,148 @@
 <?php
-
 namespace MichielRoos\H5p\Domain\Model;
 
-
-use MichielRoos\H5p\Validation\Validator\PackageValidator;
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Domain\Model\FileReference;
-use TYPO3\CMS\Extbase\Annotation as Extbase;
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 
 /**
  * Class Content
  */
-class Content extends AbstractEntity
+class Content extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
     /**
      * @var string
      */
-    protected string $author = '';
+    protected $author;
 
     /**
      * @var string
      */
-    protected string $authorComments = '';
+    protected $authorComments;
 
     /**
      * @var string
      */
-    protected string $authors = '';
+    protected $authors;
 
     /**
      * @var string
      */
-    protected string $changes = '';
+    protected $changes;
 
     /**
      * @var string
      */
-    protected string $contentType = '';
+    protected $contentType;
 
     /**
      * @var \DateTime
      */
-    protected \DateTime $createdAt;
-
-    /**
-     * @var int
-     */
-    protected int|bool $disable = false;
-
-    /**
-     * @var string
-     */
-    protected string $embedType = '';
-
-    /**
-     * @var string
-     */
-    protected string $description = '';
-
-    /**
-     * @var string
-     */
-    protected string $filtered = '{}';
+    protected $createdAt;
 
     /**
      * @var bool
      */
-    protected bool $hidden = false;
+    protected $disable;
 
     /**
      * @var string
      */
-    protected string $keywords = '';
-
-    /**
-     * @var Library
-     */
-    protected Library|int $library = 0;
+    protected $embedType;
 
     /**
      * @var string
      */
-    protected string $license = '';
+    protected $description;
 
     /**
      * @var string
      */
-    protected string $licenseVersion = '';
+    protected $filtered;
+
+    /**
+     * @var bool
+     */
+    protected $hidden;
 
     /**
      * @var string
      */
-    protected string $licenseExtras = '';
+    protected $keywords;
+
+    /**
+     * @var \MichielRoos\H5p\Domain\Model\Library
+     */
+    protected $library;
 
     /**
      * @var string
      */
-    protected string $slug = '';
+    protected $license;
+
+    /**
+     * @var string
+     */
+    protected $licenseVersion;
+
+    /**
+     * @var string
+     */
+    protected $licenseExtras;
+
+    /**
+     * @var string
+     */
+    protected $slug;
 
     /**
      * Title
      *
      * @var string
      */
-    protected string $title = '';
+    protected $title = '';
 
     /**
      * Package
      *
-     * @var FileReference
+     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @validate \MichielRoos\H5p\Validation\Validator\PackageValidator
      */
-    #[Extbase\Validate(['validator' => PackageValidator::class])]
-    protected FileReference $package;
+    protected $package;
 
     /**
      * @var string
      */
-    protected string $parameters = '{}';
+    protected $parameters;
 
     /**
      * @var \DateTime
      */
-    protected \DateTime $updatedAt;
+    protected $updatedAt;
 
     /**
      * @var string
      */
-    protected string $source = '';
+    protected $source;
 
     /**
      * @var integer
      */
-    protected int $yearFrom;
+    protected $yearFrom;
 
     /**
      * @var integer
      */
-    protected int $yearTo;
+    protected $yearTo;
 
     /**
      * Content constructor.
@@ -153,7 +159,7 @@ class Content extends AbstractEntity
      * @return Content
      * @throws \Exception
      */
-    public static function createFromContentData(array $contentData, Library $library): Content
+    public static function createFromContentData(array $contentData, Library $library)
     {
         $content = new Content();
         $content->setCreatedAt(new \DateTime());
@@ -179,13 +185,13 @@ class Content extends AbstractEntity
      * @param Library $library
      * @throws \Exception
      */
-    public function updateFromContentData(array $contentData, Library $library): void
+    public function updateFromContentData(array $contentData, Library $library)
     {
         $this->setUpdatedAt(new \DateTime());
-        $this->setFiltered('{}');
+        $this->setFiltered('');
         $this->setLibrary($library);
         if (isset($contentData['disable'])) {
-            $this->setDisable($contentData['disable']);
+            $this->setHidden($contentData['disable']);
         }
 
         if (isset($contentData['params'])) {
@@ -193,41 +199,25 @@ class Content extends AbstractEntity
 
             // "H5P Metadata"
             $this->setTitle(html_entity_decode($contentData['metadata']->title));
-            $this->setAuthors(empty($contentData['metadata']->authors) ? '' : json_encode($contentData['metadata']->authors));
-            $this->setSource(empty($contentData['metadata']->source) ? '' : $contentData['metadata']->source);
+            $this->setAuthors(empty($contentData['metadata']->authors) ? null : json_encode($contentData['metadata']->authors));
+            $this->setSource(empty($contentData['metadata']->source) ? null : $contentData['metadata']->source);
             $this->setLicense(empty($contentData['metadata']->license) ? '' : $contentData['metadata']->license);
             $this->setLicenseVersion(empty($contentData['metadata']->licenseVersion) ? '' : $contentData['metadata']->licenseVersion);
-            $this->setLicenseExtras(empty($contentData['metadata']->licenseExtras) ? '' : $contentData['metadata']->licenseExtras);
-            $this->setAuthorComments(empty($contentData['metadata']->authorComments) ? '' : $contentData['metadata']->authorComments);
-            $this->setChanges(empty($contentData['metadata']->changes) ? '' : json_encode($contentData['metadata']->changes));
+            $this->setLicenseExtras(empty($contentData['metadata']->licenseExtras) ? null : $contentData['metadata']->licenseExtras);
+            $this->setAuthorComments(empty($contentData['metadata']->authorComments) ? null : $contentData['metadata']->authorComments);
+            $this->setChanges(empty($contentData['metadata']->changes) ? null : json_encode($contentData['metadata']->changes));
         }
     }
 
-    public function determineEmbedType(): void
+    public function determineEmbedType()
     {
         $this->setEmbedType(\H5PCore::determineEmbedType('div', $this->getLibrary()->getEmbedTypes()));
     }
 
     /**
-     * @return int|Library
-     */
-    public function getLibrary(): int|Library
-    {
-        return $this->library;
-    }
-
-    /**
-     * @param Library $library
-     */
-    public function setLibrary(Library $library): void
-    {
-        $this->library = $library;
-    }
-
-    /**
      * @return string
      */
-    public function getAuthor(): string
+    public function getAuthor()
     {
         return $this->author;
     }
@@ -235,7 +225,7 @@ class Content extends AbstractEntity
     /**
      * @param string $author
      */
-    public function setAuthor(string $author): void
+    public function setAuthor($author)
     {
         $this->author = $author;
     }
@@ -243,7 +233,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getAuthorComments(): string
+    public function getAuthorComments()
     {
         return $this->authorComments;
     }
@@ -251,7 +241,7 @@ class Content extends AbstractEntity
     /**
      * @param string $authorComments
      */
-    public function setAuthorComments($authorComments): void
+    public function setAuthorComments($authorComments)
     {
         $this->authorComments = $authorComments;
     }
@@ -259,7 +249,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getAuthors(): string
+    public function getAuthors()
     {
         return $this->authors;
     }
@@ -267,7 +257,7 @@ class Content extends AbstractEntity
     /**
      * @param string $authors
      */
-    public function setAuthors(string $authors): void
+    public function setAuthors($authors)
     {
         $this->authors = $authors;
     }
@@ -275,7 +265,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getChanges(): string
+    public function getChanges()
     {
         return $this->changes;
     }
@@ -283,7 +273,7 @@ class Content extends AbstractEntity
     /**
      * @param string $changes
      */
-    public function setChanges(string $changes): void
+    public function setChanges($changes)
     {
         $this->changes = $changes;
     }
@@ -291,7 +281,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getContentType(): string
+    public function getContentType()
     {
         return $this->contentType;
     }
@@ -299,7 +289,7 @@ class Content extends AbstractEntity
     /**
      * @param string $contentType
      */
-    public function setContentType(string $contentType): void
+    public function setContentType($contentType)
     {
         $this->contentType = $contentType;
     }
@@ -307,7 +297,7 @@ class Content extends AbstractEntity
     /**
      * @return \DateTime
      */
-    public function getCreatedAt(): \DateTime
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }
@@ -315,31 +305,31 @@ class Content extends AbstractEntity
     /**
      * @param \DateTime $createdAt
      */
-    public function setCreatedAt(\DateTime $createdAt): void
+    public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
     }
 
     /**
-     * @return int
+     * @return bool
      */
-    public function getDisable(): int
+    public function isDisable()
     {
-        return (int)$this->disable;
+        return $this->disable;
     }
 
     /**
-     * @param int $disable
+     * @param bool $disable
      */
-    public function setDisable(int $disable): void
+    public function setDisable($disable)
     {
-        $this->disable = (int)$disable;
+        $this->disable = $disable;
     }
 
     /**
      * @return string
      */
-    public function getEmbedType(): string
+    public function getEmbedType()
     {
         return $this->embedType;
     }
@@ -347,7 +337,7 @@ class Content extends AbstractEntity
     /**
      * @param string $embedType
      */
-    public function setEmbedType(string $embedType): void
+    public function setEmbedType($embedType)
     {
         $this->embedType = $embedType;
     }
@@ -355,7 +345,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getDescription(): string
+    public function getDescription()
     {
         return $this->description;
     }
@@ -363,7 +353,7 @@ class Content extends AbstractEntity
     /**
      * @param string $description
      */
-    public function setDescription(string $description): void
+    public function setDescription($description)
     {
         $this->description = $description;
     }
@@ -371,15 +361,15 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getFiltered(): string
+    public function getFiltered()
     {
-        return $this->filtered ?: '{}';
+        return $this->filtered;
     }
 
     /**
      * @param string $filtered
      */
-    public function setFiltered(string $filtered): void
+    public function setFiltered($filtered)
     {
         $this->filtered = $filtered;
     }
@@ -387,7 +377,7 @@ class Content extends AbstractEntity
     /**
      * @return bool
      */
-    public function isHidden(): bool
+    public function isHidden()
     {
         return $this->hidden;
     }
@@ -395,7 +385,7 @@ class Content extends AbstractEntity
     /**
      * @param bool $hidden
      */
-    public function setHidden(bool $hidden): void
+    public function setHidden($hidden)
     {
         $this->hidden = $hidden;
     }
@@ -403,7 +393,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getKeywords(): string
+    public function getKeywords()
     {
         return $this->keywords;
     }
@@ -411,15 +401,31 @@ class Content extends AbstractEntity
     /**
      * @param string $keywords
      */
-    public function setKeywords(string $keywords): void
+    public function setKeywords($keywords)
     {
         $this->keywords = $keywords;
     }
 
     /**
+     * @return \MichielRoos\H5p\Domain\Model\Library
+     */
+    public function getLibrary()
+    {
+        return $this->library;
+    }
+
+    /**
+     * @param \MichielRoos\H5p\Domain\Model\Library $library
+     */
+    public function setLibrary($library)
+    {
+        $this->library = $library;
+    }
+
+    /**
      * @return string
      */
-    public function getLicense(): string
+    public function getLicense()
     {
         return $this->license;
     }
@@ -427,7 +433,7 @@ class Content extends AbstractEntity
     /**
      * @param string $license
      */
-    public function setLicense(string $license): void
+    public function setLicense($license)
     {
         $this->license = $license;
     }
@@ -435,7 +441,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getLicenseVersion(): string
+    public function getLicenseVersion()
     {
         return $this->licenseVersion;
     }
@@ -443,7 +449,7 @@ class Content extends AbstractEntity
     /**
      * @param string $licenseVersion
      */
-    public function setLicenseVersion(string $licenseVersion): void
+    public function setLicenseVersion($licenseVersion)
     {
         $this->licenseVersion = $licenseVersion;
     }
@@ -451,7 +457,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getLicenseExtras(): string
+    public function getLicenseExtras()
     {
         return $this->licenseExtras;
     }
@@ -459,7 +465,7 @@ class Content extends AbstractEntity
     /**
      * @param string $licenseExtras
      */
-    public function setLicenseExtras(string $licenseExtras): void
+    public function setLicenseExtras($licenseExtras)
     {
         $this->licenseExtras = $licenseExtras;
     }
@@ -467,7 +473,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getSlug(): string
+    public function getSlug()
     {
         return $this->slug;
     }
@@ -475,7 +481,7 @@ class Content extends AbstractEntity
     /**
      * @param string $slug
      */
-    public function setSlug(string $slug): void
+    public function setSlug($slug)
     {
         $this->slug = $slug;
     }
@@ -483,7 +489,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function getTitle()
     {
         return $this->title;
     }
@@ -491,23 +497,23 @@ class Content extends AbstractEntity
     /**
      * @param string $title
      */
-    public function setTitle(string $title): void
+    public function setTitle($title)
     {
         $this->title = $title;
     }
 
     /**
-     * @return FileReference
+     * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
      */
-    public function getPackage(): FileReference
+    public function getPackage()
     {
         return $this->package;
     }
 
     /**
-     * @param FileReference $package
+     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $package
      */
-    public function setPackage(FileReference $package): void
+    public function setPackage($package)
     {
         $this->package = $package;
     }
@@ -515,15 +521,15 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getParameters(): string
+    public function getParameters()
     {
-        return $this->parameters ?: '{}';
+        return $this->parameters;
     }
 
     /**
      * @param string $parameters
      */
-    public function setParameters(string $parameters): void
+    public function setParameters($parameters)
     {
         $this->parameters = $parameters;
     }
@@ -531,7 +537,7 @@ class Content extends AbstractEntity
     /**
      * @return \DateTime
      */
-    public function getUpdatedAt(): \DateTime
+    public function getUpdatedAt()
     {
         return $this->updatedAt;
     }
@@ -539,7 +545,7 @@ class Content extends AbstractEntity
     /**
      * @param \DateTime $updatedAt
      */
-    public function setUpdatedAt(\DateTime $updatedAt): void
+    public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
     }
@@ -547,7 +553,7 @@ class Content extends AbstractEntity
     /**
      * @return string
      */
-    public function getSource(): string
+    public function getSource()
     {
         return $this->source;
     }
@@ -555,7 +561,7 @@ class Content extends AbstractEntity
     /**
      * @param string $source
      */
-    public function setSource(string $source): void
+    public function setSource($source)
     {
         $this->source = $source;
     }
@@ -563,7 +569,7 @@ class Content extends AbstractEntity
     /**
      * @return int
      */
-    public function getYearFrom(): int
+    public function getYearFrom()
     {
         return $this->yearFrom;
     }
@@ -571,7 +577,7 @@ class Content extends AbstractEntity
     /**
      * @param int $yearFrom
      */
-    public function setYearFrom(int $yearFrom): void
+    public function setYearFrom($yearFrom)
     {
         $this->yearFrom = $yearFrom;
     }
@@ -579,7 +585,7 @@ class Content extends AbstractEntity
     /**
      * @return int
      */
-    public function getYearTo(): int
+    public function getYearTo()
     {
         return $this->yearTo;
     }
@@ -587,7 +593,7 @@ class Content extends AbstractEntity
     /**
      * @param int $yearTo
      */
-    public function setYearTo(int $yearTo): void
+    public function setYearTo($yearTo)
     {
         $this->yearTo = $yearTo;
     }

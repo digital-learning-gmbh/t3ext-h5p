@@ -1,9 +1,19 @@
 <?php
-
 namespace MichielRoos\H5p\Domain\Repository;
 
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 use MichielRoos\H5p\Domain\Model\Library;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
@@ -15,10 +25,10 @@ class LibraryTranslationRepository extends Repository
     /**
      * initializes any required object
      */
-    public function initializeObject(): void
+    public function initializeObject()
     {
         if ($this->defaultQuerySettings === null) {
-            $this->defaultQuerySettings = GeneralUtility::makeInstance(QuerySettingsInterface::class);
+            $this->defaultQuerySettings = $this->objectManager->get(QuerySettingsInterface::class);
         }
         $this->defaultQuerySettings->setRespectStoragePage(false);
     }
@@ -28,19 +38,15 @@ class LibraryTranslationRepository extends Repository
      * @param $language
      * @return object|null
      */
-    public function findOneByLibraryAndLanguage($library, $language): ?object
+    public function findOneByLibraryAndLanguage($library, $language)
     {
         $query = $this->createQuery();
-
-        $query->matching(
+        $libraries = $query->matching(
             $query->logicalAnd(
                 $query->equals('library', $library->getUid()),
-                $query->equals('language_code', $language),
+                $query->equals('language_code', $language)
             )
-        );
-
-        $libraries = $query->execute();
-
+        )->execute();
         if ($libraries->count()) {
             return $libraries->getFirst();
         }

@@ -1,37 +1,36 @@
 <?php
 namespace MichielRoos\H5p\Domain\Model;
 
-use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 /**
  * Class ContentDependency
  * @package \MichielRoos\H5p\Domain\Model
  */
-class ContentDependency extends AbstractEntity
+class ContentDependency extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
     /**
-     * @var Content
+     * @var \MichielRoos\H5p\Domain\Model\Content
      */
-    protected Content $content;
+    protected $content;
 
     /**
-     * @var Library
+     * @var \MichielRoos\H5p\Domain\Model\Library
      */
-    protected Library $library;
+    protected $library;
 
     /**
      * @var string
      */
-    protected string $dependencyType;
+    protected $dependencyType;
 
     /**
      * @var integer
      */
-    protected int $weight;
+    protected $weight;
 
     /**
      * @var bool
      */
-    protected bool $dropCss;
+    protected $dropCss;
 
     /**
      * Returns an assoc array as expected by
@@ -39,7 +38,7 @@ class ContentDependency extends AbstractEntity
      *
      * @return array
      */
-    public function toAssocArray(): array
+    public function toAssocArray()
     {
         // Not all fields from library are expected in this array, but we dont expect conflicts here.
         $libraryData = $this->getLibrary()->toAssocArray();
@@ -50,33 +49,33 @@ class ContentDependency extends AbstractEntity
     }
 
     /**
-     * @return Content
+     * @return \MichielRoos\H5p\Domain\Model\Content
      */
-    public function getContent(): Content
+    public function getContent()
     {
         return $this->content;
     }
 
     /**
-     * @param Content $content
+     * @param \MichielRoos\H5p\Domain\Model\Content $content
      */
-    public function setContent(Content $content): void
+    public function setContent(Content $content)
     {
         $this->content = $content;
     }
 
     /**
-     * @return Library
+     * @return \MichielRoos\H5p\Domain\Model\Library
      */
-    public function getLibrary(): Library
+    public function getLibrary()
     {
         return $this->library;
     }
 
     /**
-     * @param Library $library
+     * @param \MichielRoos\H5p\Domain\Model\Library $library
      */
-    public function setLibrary(Library $library): void
+    public function setLibrary(Library $library)
     {
         $this->library = $library;
     }
@@ -84,7 +83,7 @@ class ContentDependency extends AbstractEntity
     /**
      * @return string
      */
-    public function getDependencyType(): string
+    public function getDependencyType()
     {
         return $this->dependencyType;
     }
@@ -92,7 +91,7 @@ class ContentDependency extends AbstractEntity
     /**
      * @param string $dependencyType
      */
-    public function setDependencyType(string $dependencyType): void
+    public function setDependencyType(string $dependencyType)
     {
         $this->dependencyType = $dependencyType;
     }
@@ -100,7 +99,7 @@ class ContentDependency extends AbstractEntity
     /**
      * @return int
      */
-    public function getWeight(): int
+    public function getWeight()
     {
         return $this->weight;
     }
@@ -108,7 +107,7 @@ class ContentDependency extends AbstractEntity
     /**
      * @param int $weight
      */
-    public function setWeight(int $weight): void
+    public function setWeight(int $weight)
     {
         $this->weight = $weight;
     }
@@ -116,7 +115,7 @@ class ContentDependency extends AbstractEntity
     /**
      * @return bool
      */
-    public function isDropCss(): bool
+    public function isDropCss()
     {
         return $this->dropCss;
     }
@@ -124,7 +123,7 @@ class ContentDependency extends AbstractEntity
     /**
      * @param bool $dropCss
      */
-    public function setDropCss(bool $dropCss): void
+    public function setDropCss(bool $dropCss)
     {
         $this->dropCss = $dropCss;
     }

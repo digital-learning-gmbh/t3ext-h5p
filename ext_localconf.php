@@ -1,40 +1,43 @@
 <?php
-defined('TYPO3') or die('¯\_(ツ)_/¯');
+defined('TYPO3_MODE') or die('¯\_(ツ)_/¯');
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'h5p',
+    'MichielRoos.h5p',
     'view',
     [
-        \MichielRoos\H5p\Controller\ViewController::class => 'index',
+        'View' => 'index',
     ],
     [
-        \MichielRoos\H5p\Controller\ViewController::class => 'index',
+        'View' => 'index',
     ],
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'h5p',
+    'MichielRoos.h5p',
     'statistics',
     [
-        \MichielRoos\H5p\Controller\ViewController::class => 'statistics',
+        'View' => 'statistics',
     ],
     [
-        \MichielRoos\H5p\Controller\ViewController::class => 'statistics',
+        'View' => 'statistics',
     ],
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'h5p',
+    'MichielRoos.h5p',
     'ajax',
     [
-        \MichielRoos\H5p\Controller\AjaxController::class => 'index,finish,contentUserData',
+        'Ajax' => 'index,finish,contentUserData',
     ],
     [
-        \MichielRoos\H5p\Controller\AjaxController::class => 'index,finish,contentUserData',
+        'Ajax' => 'index,finish,contentUserData',
     ]
 );
+
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\MichielRoos\H5p\Property\TypeConverter\UploadedFileReferenceConverter::class);
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter(\MichielRoos\H5p\Property\TypeConverter\ObjectStorageConverter::class);
 
 
 // InsertH5p button for editor

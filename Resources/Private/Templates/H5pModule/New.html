@@ -7,6 +7,7 @@
             <f:if condition="{h5pContentAllowedOnPage}">
                 <f:then>
                     <h1><f:translate key="module.menu.new">New</f:translate></h1>
+                    <f:flashMessages/>
 
                     <f:form method="post" enctype="multipart/form-data" id="h5p-content-form" action="create" controller="H5pModule">
                         <div id="post-body-content">
@@ -30,11 +31,11 @@
                             <div id="minor-publishing" style="display:none">
                                 <label><input type="radio" name="action" value="upload"/>Upload</label>
                                 <label><input type="radio" name="action" value="create"/>Create</label>
-                                <f:form.hidden name="library" id="tx_h5p_web_h5pmanager_library" value="{library}"/>
-                                <f:form.hidden name="parameters" id="tx_h5p_web_h5pmanager_parameters" value="{parameters}"/>
+                                <f:form.hidden name="library" value="{library}"/>
+                                <f:form.hidden name="parameters" value="{parameters}"/>
                             </div>
                             <div id="major-publishing-actions" class="submitbox">
-                                <input type="submit" name="submit-button" value="Create" class="btn btn-light"/>
+                                <input type="submit" name="submit-button" value="Create" class="button button-primary button-large"/>
                             </div>
                         </div>
                         <div class="postbox h5p-sidebar">
@@ -71,7 +72,7 @@
                 <div><label>
                     <f:form.checkbox name="collectStatistics" value="true"/>
                     Store frontend user progress and statistics in TYPO3</label></div>
-                <div><input type="submit" name="submit-button" value="I consent, give me the Hub!" class="btn btn-light"/></div>
+                <div><input type="submit" name="submit-button" value="I consent, give me the Hub!" class="button button-primary button-large"/></div>
             </f:form>
         </f:else>
     </f:if>

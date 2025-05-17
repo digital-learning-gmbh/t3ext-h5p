@@ -1,27 +1,28 @@
 <?php
 namespace MichielRoos\H5p\Adapter\Core;
 
-use TYPO3\CMS\Core\Resource\Exception\ExistingTargetFolderException;
-use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
-use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderWritePermissionsException;
-use MichielRoos\H5p\Exception\MethodNotImplementedException;
-use MichielRoos\H5p\Utility\MaintenanceUtility;
-use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
-use TYPO3\CMS\Core\Resource\Exception;
-use TYPO3\CMS\Core\Resource\Exception\AbstractFileOperationException;
-use TYPO3\CMS\Core\Resource\Exception\ExistingTargetFileNameException;
-use TYPO3\CMS\Core\Resource\Exception\FileOperationErrorException;
-use TYPO3\CMS\Core\Resource\Exception\InsufficientUserPermissionsException;
-use TYPO3\CMS\Core\Resource\Exception\InvalidPathException;
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
+
 use MichielRoos\H5p\Domain\Model\CachedAsset;
 use MichielRoos\H5p\Domain\Repository\CachedAssetRepository;
-use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\File\ExtendedFileUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 /**
@@ -64,21 +65,20 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *
      * @param ResourceStorage $storage
      * @param string $path
-     *
-     * @throws ExistingTargetFolderException
-     * @throws InsufficientFolderAccessPermissionsException
-     * @throws InsufficientFolderWritePermissionsException
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFolderException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderWritePermissionsException
      */
-    public function __construct(ResourceStorage $storage, string $path = 'h5p')
+    public function __construct(ResourceStorage $storage, $path = 'h5p')
     {
         $this->storage = $storage;
-        $rootLevelFolder = $this->getRootLevelFolder();
+        $rootLevelFolder = $this->storage->getRootLevelFolder();
         if ($rootLevelFolder->getIdentifier() === '/h5p/') {
             $this->folderPrefix = '';
         }
-        $this->cachedAssetRepository = GeneralUtility::makeInstance(CachedAssetRepository::class);
-        $this->persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $this->cachedAssetRepository = $objectManager->get(CachedAssetRepository::class);
+        $this->persistenceManager = $objectManager->get(PersistenceManager::class);
 
         // Ensure base directories exist
         foreach (['cachedassets', 'content', 'editor/audios', 'editor/images', 'editor/videos', 'exports', 'libraries', 'packages'] as $name) {
@@ -99,37 +99,18 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
     }
 
     /**
-     * Get the rootlevel folder of the fileMount named h5p
-     *
-     * @return Folder
-     */
-    private function getRootLevelFolder(): Folder
-    {
-        $fileMounts = $this->storage->getFileMounts();
-        if (!empty($fileMounts)) {
-            foreach ($fileMounts as $fileMount) {
-                $folder = $fileMount['folder'];
-                if ($folder->getIdentifier() === '/h5p/') {
-                    return $folder;
-                }
-            }
-        }
-        return $this->storage->getRootLevelFolder();
-    }
-
-    /**
      * Store the library folder.
      *
      * @param array $library
      *  Library properties
-     * @throws ExistingTargetFolderException
-     * @throws InsufficientFolderAccessPermissionsException
-     * @throws InsufficientFolderWritePermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFolderException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderWritePermissionsException
      */
     public function saveLibrary($library)
     {
         $name = \H5PCore::libraryToString($library, true);
-        $rootLevelFolder = $this->getRootLevelFolder();
+        $rootLevelFolder = $this->storage->getRootLevelFolder();
         $destination = 'libraries/' . $name . '/';
         if ($this->folderPrefix) {
             $destination = $this->folderPrefix . $destination;
@@ -175,13 +156,13 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *  Path on file system to content directory.
      * @param array $content
      *  Content properties
-     * @throws ExistingTargetFolderException
-     * @throws InsufficientFolderAccessPermissionsException
-     * @throws InsufficientFolderWritePermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFolderException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderWritePermissionsException
      */
     public function saveContent($source, $content)
     {
-        $rootLevelFolder = $this->getRootLevelFolder();
+        $rootLevelFolder = $this->storage->getRootLevelFolder();
         $destination = 'content/' . $content['id'] . '/';
         if ($this->folderPrefix) {
             $destination = $this->folderPrefix . $destination;
@@ -225,14 +206,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *
      * @param array $content
      *  Content properties
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function deleteContent($content)
     {
         // TODO: Implement deleteContent() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -242,14 +219,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *  Identifier of content to clone.
      * @param int $newId
      *  The cloned content's identifier
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function cloneContent($id, $newId)
     {
         // TODO: Implement cloneContent() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -258,10 +231,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * @return string
      *  Path
      */
-    public function getTmpPath(): string
+    public function getTmpPath()
     {
         $relativeFilename = 'typo3temp/var/h5p/' . sha1(microtime());
-        $destination = Environment::getPublicPath() . '/' . $relativeFilename;
+        $destination = PATH_site . $relativeFilename;
         GeneralUtility::mkdir_deep($destination);
         return $destination;
     }
@@ -273,14 +246,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *  Content identifier
      * @param string $target
      *  Where the content folder will be saved
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function exportContent($id, $target)
     {
         // TODO: Implement exportContent() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -290,14 +259,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *  Library properties
      * @param string $target
      *  Where the library folder will be saved
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function exportLibrary($library, $target)
     {
         // TODO: Implement exportLibrary() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -307,43 +272,31 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *  Path on file system to temporary export file.
      * @param string $filename
      *  Name of export file.
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function saveExport($source, $filename)
     {
         // TODO: Implement saveExport() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
      * Removes given export file
      *
      * @param string $filename
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function deleteExport($filename)
     {
         // TODO: Implement deleteExport() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
      * Check if the given export file exists
      *
      * @param string $filename
-     *
      * @return bool
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function hasExport($filename)
     {
         // TODO: Implement hasExport() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -354,7 +307,7 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *  A set of all the assets required for content to display
      * @param string $key
      *  Hashed key for cached asset
-     * @throws IllegalObjectTypeException
+     * @throws \TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException
      */
     public function cacheAssets(&$files, $key)
     {
@@ -458,14 +411,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *
      * @param array $keys
      *   The hash keys of removed files
-     *
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function deleteCachedAssets($keys)
     {
         // TODO: Implement deleteCachedAssets() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -475,11 +424,11 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * @param \H5peditorFile $file
      * @param int $contentId
      * @return \H5peditorFile
-     * @throws Exception
+     * @throws \TYPO3\CMS\Core\Resource\Exception
      */
-    public function saveFile($file, $contentId): \H5peditorFile
+    public function saveFile($file, $contentId)
     {
-        $rootLevelFolder = $this->getRootLevelFolder();
+        $rootLevelFolder = $this->storage->getRootLevelFolder();
         $prefix = '';
         if ($this->folderPrefix) {
             $prefix = $this->folderPrefix . $prefix;
@@ -505,6 +454,9 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
         $this->registerUploadField($data, $namespace, $targetFalDirectory, $editorFilename);
 
         $fileProcessor = GeneralUtility::makeInstance(ExtendedFileUtility::class);
+        if (method_exists($fileProcessor, 'init')) {
+            $fileProcessor->init([], []);
+        }
         $fileProcessor->setActionPermissions();
         $fileProcessor->start($data);
         $fileProcessor->setExistingFilesConflictMode(DuplicationBehavior::REPLACE);
@@ -518,10 +470,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * @param array &$data
      * @param string $namespace
      * @param string $targetDirectory
-     * @param string $editorFilename
+     * @param $editorFilename
      * @return void
      */
-    protected function registerUploadField(array &$data, string $namespace, string $targetDirectory = '1:/_temp_/', string $editorFilename = ''): void
+    protected function registerUploadField(array &$data, $namespace, $targetDirectory = '1:/_temp_/', $editorFilename = '')
     {
         if (!isset($data['upload'])) {
             $data['upload'] = [];
@@ -549,15 +501,15 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * @param string $file path + name
      * @param string|int $fromId Content ID or 'editor' string
      * @param int $toId Target Content ID
-     * @throws AbstractFileOperationException
-     * @throws ExistingTargetFileNameException
-     * @throws ExistingTargetFolderException
-     * @throws InsufficientFolderAccessPermissionsException
-     * @throws InsufficientFolderWritePermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\AbstractFileOperationException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFileNameException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFolderException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderWritePermissionsException
      */
     public function cloneContentFile($file, $fromId, $toId)
     {
-        $rootLevelFolder = $this->getRootLevelFolder();
+        $rootLevelFolder = $this->storage->getRootLevelFolder();
 
         if ($fromId === 'editor') {
             $sourcePath = $this->folderPrefix . 'editor';
@@ -588,21 +540,21 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * @param string $contentId Id of content
      *
      * @return object Object containing h5p json and content json data
-     * @throws ExistingTargetFileNameException
-     * @throws ExistingTargetFolderException
-     * @throws FileOperationErrorException
-     * @throws InsufficientFolderAccessPermissionsException
-     * @throws InsufficientFolderWritePermissionsException
-     * @throws InsufficientUserPermissionsException
-     * @throws InvalidPathException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFileNameException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\ExistingTargetFolderException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\FileOperationErrorException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientFolderWritePermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InsufficientUserPermissionsException
+     * @throws \TYPO3\CMS\Core\Resource\Exception\InvalidPathException
      */
-    public function moveContentDirectory($source, $contentId = null): ?object
+    public function moveContentDirectory($source, $contentId = null)
     {
         if ($source === null) {
             return null;
         }
 
-        $rootLevelFolder = $this->getRootLevelFolder();
+        $rootLevelFolder = $this->storage->getRootLevelFolder();
 
         $destinationFolder = '';
         if ($contentId !== null) {
@@ -614,7 +566,6 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
 
         // Remove any old content
         if ($destinationFolder !== '') {
-            /** @var Folder $oldFolder */
             $oldFolder = GeneralUtility::makeInstance(
                 Folder::class,
                 $this->storage,
@@ -624,9 +575,7 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
             if ($this->storage->hasFolderInFolder($oldFolder->getIdentifier(), $rootLevelFolder)) {
                 $this->storage->deleteFolder($oldFolder, true);
             }
-            if (!$this->storage->hasFolder($destination)) {
-                $this->storage->createFolder($destination, $rootLevelFolder);
-            }
+            $this->storage->createFolder($destination, $rootLevelFolder);
         }
 
         /** @var \SplFileInfo $fileInfo */
@@ -634,18 +583,11 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
             $pathName = $fileInfo->getPathname();
             $dir = str_replace($source, '', $pathName);
             $dir = ltrim($dir, '/');
-            if (strpos($dir, 'content') === 0) {
-                $dir = substr_replace($dir, '', 0, strlen('content'));
-                $dir = ltrim($dir, '/');
-            }
-            if ($fileInfo->isDir() && !$this->storage->hasFolder($destination . '/' . $dir)) {
+            if ($fileInfo->isDir()) {
                 $this->storage->createFolder($destination . '/' . $dir, $rootLevelFolder);
-            } elseif ($fileInfo->isFile()) {
+            }
+            if ($fileInfo->isFile()) {
                 $targetDirectory = ltrim(str_replace($source, '', $fileInfo->getPath()), '/');
-                if (strpos($targetDirectory, 'content') === 0) {
-                    $targetDirectory = substr_replace($targetDirectory, '', 0, strlen('content'));
-                    $targetDirectory = ltrim($targetDirectory, '/');
-                }
                 $destinationFolder = GeneralUtility::makeInstance(
                     Folder::class,
                     $this->storage,
@@ -680,15 +622,11 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * Read file content of given file and then return it.
      *
      * @param string $file_path
-     *
      * @return string contents
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function getContent($file_path)
     {
         // TODO: Implement getContent() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -697,14 +635,11 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *
      * @param string $file path + name
      * @param int $contentId
-     *
      * @return string|int File ID or NULL if not found
-     * @throws MethodNotImplementedException
      */
     public function getContentFile($file, $contentId)
     {
         // TODO: Implement getContentFile() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -713,13 +648,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *
      * @param string $file path + name
      * @param int $contentId
-     *
-     * @throws MethodNotImplementedException
      */
     public function removeContentFile($file, $contentId)
     {
         // TODO: Implement removeContentFile() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -727,13 +659,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * the required folders
      *
      * @return bool True if server has the proper write access
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function hasWriteAccess()
     {
         // TODO: Implement hasWriteAccess() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -741,15 +670,11 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      *
      * @param string $libraryName
      * @param string $developmentPath
-     *
      * @return bool
-     * @throws MethodNotImplementedException
-     * @throws MethodNotImplementedException
      */
     public function hasPresave($libraryName, $developmentPath = null)
     {
         // TODO: Implement hasPresave() method.
-        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -762,15 +687,10 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      */
     public function getUpgradeScript($machineName, $majorVersion, $minorVersion)
     {
-        $folderPrefix = $this->folderPrefix ?: '';
-        $upgradesFilePath = "/{$folderPrefix}libraries/{$machineName}-{$majorVersion}.{$minorVersion}/upgrades.js";
+        $upgradesFilePath = "/h5p/libraries/{$machineName}-{$majorVersion}.{$minorVersion}/upgrades.js";
         if ($this->storage->hasFile($upgradesFilePath)) {
             $file = $this->storage->getFile($upgradesFilePath);
-            $path = '/' . ltrim($file->getPublicUrl(), '/');
-            if ($this->folderPrefix) {
-                $path = str_replace('/fileadmin/' . $folderPrefix, '/', $path);
-            }
-            return $path;
+            return '/' . ltrim($file->getPublicUrl(), '/');
         }
 
         return NULL;
@@ -784,16 +704,8 @@ class FileStorage implements \H5PFileStorage, SingletonInterface
      * @param resource $stream
      * @return bool
      */
-    public function saveFileFromZip($path, $file, $stream): bool
+    public function saveFileFromZip($path, $file, $stream)
     {
-        $filePath = $path . '/' . $file;
-
-        // Make sure the directory exists first
-        $matches = array();
-        preg_match('/(.+)\/[^\/]*$/', $filePath, $matches);
-        GeneralUtility::mkdir_deep($matches[1]);
-
-        // Store in local storage folder
-        return file_put_contents($filePath, $stream);
+        // TODO: Implement saveFileFromZip() method.
     }
 }
