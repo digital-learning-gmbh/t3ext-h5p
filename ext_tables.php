@@ -15,7 +15,7 @@ defined('TYPO3') or die('¯\_(ツ)_/¯');
     'EXT:h5p/Resources/Public/Icon/h5p.gif'
 );
 
-if (TYPO3_MODE === 'BE') {
+if (TYPO3 === 'BE') {
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
         'MichielRoos.h5p',
         'web',
