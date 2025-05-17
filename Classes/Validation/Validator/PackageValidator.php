@@ -32,7 +32,7 @@ class PackageValidator extends AbstractValidator
      * @param FileReference $package
      * @return bool
      */
-    protected function isValid($package)
+    protected function isValid(mixed $package): void
     {
         $storage = $package->getOriginalResource()->getStorage();
         $h5pFramewok    = GeneralUtility::makeInstance(Framework::class, $storage);
