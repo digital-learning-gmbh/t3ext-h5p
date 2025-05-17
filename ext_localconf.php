@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3_MODE') or die('¯\_(ツ)_/¯');
+defined('TYPO3') or die('¯\_(ツ)_/¯');
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'MichielRoos.h5p',
