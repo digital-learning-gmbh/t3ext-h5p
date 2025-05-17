@@ -51,9 +51,6 @@ class PackageValidator extends AbstractValidator
                 $this->addError($errorMessage, $code);
             }
             unlink($validator->h5pF->getUploadedH5pPath());
-            return false;
         }
-
-        return $success;
     }
 }
