@@ -1,5 +1,5 @@
 <?php
-defined('TYPO3_MODE') or die('¯\_(ツ)_/¯');
+defined('TYPO3') or die('¯\_(ツ)_/¯');
 
 /*
  * This file is part of the TYPO3 CMS project.
