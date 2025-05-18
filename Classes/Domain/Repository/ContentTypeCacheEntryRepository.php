@@ -1,36 +1,20 @@
 <?php
 namespace MichielRoos\H5p\Domain\Repository;
 
-/*
- * This file is part of the TYPO3 CMS project.
- *
- * It is free software; you can redistribute it and/or modify it under
- * the terms of the GNU General Public License, either version 2
- * of the License, or any later version.
- *
- * For the full copyright and license information, please read the
- * LICENSE.txt file that was distributed with this source code.
- *
- * The TYPO3 project - inspiring people to share!
- */
 use MichielRoos\H5p\Domain\Model\ContentTypeCacheEntry;
-use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
+use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-/**
- * Class ContentTypeCacheEntryRepository
- */
 class ContentTypeCacheEntryRepository extends Repository
 {
-    /**
-     * initializes any required object
-     */
-    public function initializeObject()
+    public function __construct(Typo3QuerySettings $querySettings = null)
     {
-        if ($this->defaultQuerySettings === null) {
-            $this->defaultQuerySettings = $this->objectManager->get(QuerySettingsInterface::class);
+        parent::__construct();
+
+        if ($querySettings !== null) {
+            $querySettings->setRespectStoragePage(false);
+            $this->setDefaultQuerySettings($querySettings);
         }
-        $this->defaultQuerySettings->setRespectStoragePage(false);
     }
 
     /**
@@ -39,11 +23,11 @@ class ContentTypeCacheEntryRepository extends Repository
      *
      * @return array
      */
-    public function getContentTypeCacheObjects()
+    public function getContentTypeCacheObjects(): array
     {
         $cacheEntries = [];
-        /** @var ContentTypeCacheEntry $contentTypeCacheEntry */
         foreach ($this->findAll() as $contentTypeCacheEntry) {
+            /** @var ContentTypeCacheEntry $contentTypeCacheEntry */
             $cacheEntries[] = $contentTypeCacheEntry->toStdClass();
         }
         return $cacheEntries;
