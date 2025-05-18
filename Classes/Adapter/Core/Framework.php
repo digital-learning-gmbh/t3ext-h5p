@@ -314,12 +314,19 @@ class Framework implements H5PFrameworkInterface, SingletonInterface
      * @param string $fileName
      * @return string URL to file
      */
-    public function getLibraryFileUrl($libraryFolderName, $fileName): string
-    {
-        $libraryFolderName = $this->trimAfterSecondDot($libraryFolderName);
-        $file = $this->storage->getFile('/h5p/libraries/' . $libraryFolderName . '/' . $fileName);
-        return '/' . ltrim($file->getPublicUrl(), '/');
+public function getLibraryFileUrl($libraryFolderName, $fileName): ?string
+{
+    $libraryFolderName = $this->trimAfterSecondDot($libraryFolderName);
+    $fileIdentifier = '/h5p/libraries/' . $libraryFolderName . '/' . $fileName;
+
+    if (!$this->storage->hasFile($fileIdentifier)) {
+        // Datei existiert nicht – gib z. B. einen Fallback oder null zurück
+        return null;
     }
+
+    $file = $this->storage->getFile($fileIdentifier);
+    return '/' . ltrim($file->getPublicUrl(), '/');
+}
 
     public function trimAfterSecondDot($input): string
     {
