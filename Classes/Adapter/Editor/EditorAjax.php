@@ -30,12 +30,15 @@ class EditorAjax implements \H5PEditorAjaxInterface
     /**
      * EditorAjax constructor.
      */
-    public function __construct()
-    {
-        $this->libraryRepository = GeneralUtility::makeInstanceForDi(LibraryRepository::class);
-        $this->libraryTranslationRepository = GeneralUtility::makeInstanceForDi(LibraryTranslationRepository::class);
-        $this->contentTypeCacheEntryRepository = GeneralUtility::makeInstanceForDi(ContentTypeCacheEntryRepository::class);
-    }
+public function __construct(
+    LibraryRepository $libraryRepository,
+    ContentTypeCacheEntryRepository $contentTypeCacheEntryRepository,
+    LibraryTranslationRepository $libraryTranslationRepository
+) {
+    $this->libraryRepository = $libraryRepository;
+    $this->contentTypeCacheEntryRepository = $contentTypeCacheEntryRepository;
+    $this->libraryTranslationRepository = $libraryTranslationRepository;
+}
 
     /**
      * Gets latest library versions that exists locally
