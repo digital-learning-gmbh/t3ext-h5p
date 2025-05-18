@@ -169,7 +169,7 @@ class FileStorage implements H5PFileStorage, SingletonInterface
                 } else {
                     $destinationFolder = $libraryFolder->getSubfolder($targetDirectory);
                 }
-                $destinationFolder->addFile($fileInfo->getPathname(), $fileInfo->getFilename());
+                $destinationFolder->addFile($fileInfo->getPathname(), $fileInfo->getFilename(), DuplicationBehavior::REPLACE);
             }
         }
     }
@@ -221,7 +221,7 @@ class FileStorage implements H5PFileStorage, SingletonInterface
                 } else {
                     $destinationFolder = $contentFolder->getSubfolder($targetDirectory);
                 }
-                $destinationFolder->addFile($fileInfo->getPathname(), $fileInfo->getFilename());
+                $destinationFolder->addFile($fileInfo->getPathname(), $fileInfo->getFilename(), DuplicationBehavior::REPLACE);
             }
         }
     }
