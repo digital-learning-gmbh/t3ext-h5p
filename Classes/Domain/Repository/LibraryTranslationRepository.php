@@ -16,6 +16,7 @@ namespace MichielRoos\H5p\Domain\Repository;
 use MichielRoos\H5p\Domain\Model\Library;
 use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class LibraryTranslationRepository
@@ -25,13 +26,13 @@ class LibraryTranslationRepository extends Repository
     /**
      * initializes any required object
      */
-    public function initializeObject()
-    {
-        if ($this->defaultQuerySettings === null) {
-            $this->defaultQuerySettings = $this->objectManager->get(QuerySettingsInterface::class);
-        }
-        $this->defaultQuerySettings->setRespectStoragePage(false);
+public function initializeObject()
+{
+    if ($this->defaultQuerySettings === null) {
+        $this->defaultQuerySettings = GeneralUtility::makeInstance(QuerySettingsInterface::class);
     }
+    $this->defaultQuerySettings->setRespectStoragePage(false);
+}
 
     /**
      * @param Library $library
