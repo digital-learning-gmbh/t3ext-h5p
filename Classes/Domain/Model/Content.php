@@ -115,7 +115,7 @@ class Content extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * Package
      *
      * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @validate \MichielRoos\H5p\Validation\Validator\PackageValidator
+     *
      */
     protected $package;
 
