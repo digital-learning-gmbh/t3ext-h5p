@@ -7,7 +7,6 @@ use MichielRoos\H5p\Domain\Repository\ContentTypeCacheEntryRepository;
 use MichielRoos\H5p\Domain\Repository\LibraryRepository;
 use MichielRoos\H5p\Domain\Repository\LibraryTranslationRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class EditorAjax implements \H5PEditorAjaxInterface
@@ -30,15 +29,12 @@ class EditorAjax implements \H5PEditorAjaxInterface
     /**
      * EditorAjax constructor.
      */
-public function __construct(
-    LibraryRepository $libraryRepository,
-    ContentTypeCacheEntryRepository $contentTypeCacheEntryRepository,
-    LibraryTranslationRepository $libraryTranslationRepository
-) {
-    $this->libraryRepository = $libraryRepository;
-    $this->contentTypeCacheEntryRepository = $contentTypeCacheEntryRepository;
-    $this->libraryTranslationRepository = $libraryTranslationRepository;
-}
+    public function __construct()
+    {
+        $this->libraryRepository = GeneralUtility::makeInstance(LibraryRepository::class);
+        $this->libraryTranslationRepository = GeneralUtility::makeInstance(LibraryTranslationRepository::class);
+        $this->contentTypeCacheEntryRepository = GeneralUtility::makeInstance(ContentTypeCacheEntryRepository::class);
+    }
 
     /**
      * Gets latest library versions that exists locally
