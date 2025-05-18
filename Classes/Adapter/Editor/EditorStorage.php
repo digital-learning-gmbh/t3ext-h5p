@@ -29,9 +29,8 @@ class EditorStorage implements \H5peditorStorage
      */
     public function __construct()
     {
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->libraryRepository = $objectManager->get(LibraryRepository::class);
-        $this->libraryTranslationRepository = $objectManager->get(LibraryTranslationRepository::class);
+        $this->libraryRepository            = GeneralUtility::makeInstanceForDi(LibraryRepository::class);
+        $this->libraryTranslationRepository = GeneralUtility::makeInstanceForDi(LibraryTranslationRepository::class);
     }
 
     /**
