@@ -3,13 +3,13 @@
 namespace MichielRoos\H5p\Adapter\Editor;
 
 use H5peditorFile;
-use MichielRoos\H5p\Adapter\Core\Framework;
+use MichielRoos\H5p\Adapter\Core\FrameworkFactory;
 use MichielRoos\H5p\Domain\Model\Library;
 use MichielRoos\H5p\Domain\Model\LibraryTranslation;
 use MichielRoos\H5p\Domain\Repository\LibraryRepository;
 use MichielRoos\H5p\Domain\Repository\LibraryTranslationRepository;
+use MichielRoos\H5p\Utility\MaintenanceUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class EditorStorage implements \H5peditorStorage
@@ -29,8 +29,8 @@ class EditorStorage implements \H5peditorStorage
      */
     public function __construct()
     {
-        $this->libraryRepository            = GeneralUtility::makeInstanceForDi(LibraryRepository::class);
-        $this->libraryTranslationRepository = GeneralUtility::makeInstanceForDi(LibraryTranslationRepository::class);
+        $this->libraryRepository            = GeneralUtility::makeInstance(LibraryRepository::class);
+        $this->libraryTranslationRepository = GeneralUtility::makeInstance(LibraryTranslationRepository::class);
     }
 
     /**
@@ -45,14 +45,15 @@ class EditorStorage implements \H5peditorStorage
      */
     public function getLanguage($machineName, $majorVersion, $minorVersion, $language)
     {
-        $translation = false;
         $library = $this->libraryRepository->findOneByMachinenameMajorVersionAndMinorVersion($machineName, $majorVersion, $minorVersion);
-        /** @var LibraryTranslation $translation */
+        if (!$library) {
+            return false;
+        }
         $libraryTranslation = $this->libraryTranslationRepository->findOneByLibraryAndLanguage($library, $language);
         if ($libraryTranslation instanceof LibraryTranslation) {
-            $translation = $libraryTranslation->getTranslation();
+            return $libraryTranslation->getTranslation();
         }
-        return $translation;
+        return false;
     }
 
     /**
@@ -67,8 +68,8 @@ class EditorStorage implements \H5peditorStorage
     {
         // Note that the parameter $machineName is contains $name instead
         $translationCodes = ['en'];
-        $library = $this->libraryRepository->findOneByMachinenameMajorVersionAndMinorVersion($machineName, $majorVersion, $minorVersion);
-        $translations = $this->libraryTranslationRepository->findByLibrary($library->getUid());
+        $library          = $this->libraryRepository->findOneByMachinenameMajorVersionAndMinorVersion($machineName, $majorVersion, $minorVersion);
+        $translations     = $this->libraryTranslationRepository->findByLibrary($library->getUid());
         /** @var LibraryTranslation $translation */
         foreach ($translations as $translation) {
             $translationCodes[] = $translation->getLanguageCode();
@@ -85,6 +86,7 @@ class EditorStorage implements \H5peditorStorage
     public function keepFile($fileId)
     {
         // TODO: Implement keepFile() method.
+        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -117,10 +119,10 @@ class EditorStorage implements \H5peditorStorage
                     continue;
                 }
                 // Library found, add details to list
-                $libraryData->tutorialUrl = $library->getTutorialUrl();
-                $libraryData->title = $library->getTitle();
-                $libraryData->runnable = $library->isRunnable();
-                $libraryData->restricted = false; // for now
+                $libraryData->tutorialUrl      = $library->getTutorialUrl();
+                $libraryData->title            = $library->getTitle();
+                $libraryData->runnable         = $library->isRunnable();
+                $libraryData->restricted       = false; // for now
                 $libraryData->metadataSettings = json_decode($library->getMetadataSettings());
                 // TODO: Implement the below correctly with auth check
                 // $libraryData->restricted = $super_user ? FALSE : $library->isRestricted();
@@ -179,6 +181,7 @@ class EditorStorage implements \H5peditorStorage
     public function alterLibraryFiles(&$files, $libraries)
     {
         // TODO: Implement alterLibraryFiles() method.
+        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -193,23 +196,21 @@ class EditorStorage implements \H5peditorStorage
      */
     public static function saveFileTemporarily($data, $move_file)
     {
-        $resourceFactory = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance();
-        $storage = $resourceFactory->getDefaultStorage();
-        $h5pFramework    = GeneralUtility::makeInstance(Framework::class, $storage);
+        $frameworkFactory = GeneralUtility::makeInstance(FrameworkFactory::class);
+        $h5pFramework     = $frameworkFactory->create();
 
         $path = $h5pFramework->getUploadedH5pPath();
 
         if ($move_file) {
             // Move so core can validate the file extension.
             rename($data, $path);
-        }
-        else {
+        } else {
             // Create file from data
             file_put_contents($path, $data);
         }
 
-        return (object) array (
-            'dir' => dirname($path),
+        return (object)array(
+            'dir'      => dirname($path),
             'fileName' => basename($path)
         );
     }
@@ -224,6 +225,7 @@ class EditorStorage implements \H5peditorStorage
     public static function markFileForCleanup($file, $content_id)
     {
         // TODO: Implement markFileForCleanup() method.
+        MaintenanceUtility::methodMissing(__CLASS__, __FUNCTION__);
     }
 
     /**
@@ -233,6 +235,10 @@ class EditorStorage implements \H5peditorStorage
      */
     public static function removeTemporarilySavedFiles($filePath)
     {
-        // TODO: Implement removeTemporarilySavedFiles() method.
+        if (is_dir($filePath)) {
+            \H5PCore::deleteFileTree($filePath);
+        } elseif (is_file($filePath)) {
+            unlink($filePath);
+        }
     }
 }
