@@ -158,11 +158,11 @@ class Framework implements H5PFrameworkInterface, SingletonInterface
         $this->cachedAssetRepository           = GeneralUtility::makeInstance(CachedAssetRepository::class);
         $this->configSettingRepository         = GeneralUtility::makeInstance(ConfigSettingRepository::class);
         $this->contentRepository               = GeneralUtility::makeInstance(ContentRepository::class);
-        $this->contentDependencyRepository     = GeneralUtility::makeInstanceForDi(ContentDependencyRepository::class);
-        $this->contentTypeCacheEntryRepository = GeneralUtility::makeInstanceForDi(ContentTypeCacheEntryRepository::class);
+        $this->contentDependencyRepository     = GeneralUtility::makeInstance(ContentDependencyRepository::class);
+        $this->contentTypeCacheEntryRepository = GeneralUtility::makeInstance(ContentTypeCacheEntryRepository::class);
         $this->libraryRepository               = GeneralUtility::makeInstance(LibraryRepository::class);
-        $this->libraryDependencyRepository     = GeneralUtility::makeInstanceForDi(LibraryDependencyRepository::class);
-        $this->libraryTranslationRepository    = GeneralUtility::makeInstanceForDi(LibraryTranslationRepository::class);
+        $this->libraryDependencyRepository     = GeneralUtility::makeInstance(LibraryDependencyRepository::class);
+        $this->libraryTranslationRepository    = GeneralUtility::makeInstance(LibraryTranslationRepository::class);
     }
 
     /**
