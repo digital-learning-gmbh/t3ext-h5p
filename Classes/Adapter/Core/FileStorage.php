@@ -134,7 +134,7 @@ class FileStorage implements H5PFileStorage, SingletonInterface
      */
     public function saveLibrary($library): void
     {
-        $name = H5PCore::libraryToString($library, true);
+        $name = H5PCore::libraryToFolderName($library, true);
         $rootLevelFolder = $this->getRootLevelFolder();
         $destination = 'libraries/' . $name . '/';
         if ($this->folderPrefix) {
