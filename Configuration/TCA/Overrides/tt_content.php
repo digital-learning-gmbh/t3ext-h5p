@@ -13,6 +13,15 @@ defined('TYPO3') or die('¯\_(ツ)_/¯');
  *
  * The TYPO3 project - inspiring people to share!
  */
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPlugin(
+    [
+        'H5P', // Beschriftung im Backend
+        'h5p_view',        // CType / list_type
+        'EXT:h5p/Resources/Public/Icons/Extension.gif' // optional
+    ],
+    'CType',
+    'h5p'
+);
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
     'tt_content',
