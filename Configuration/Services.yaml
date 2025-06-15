@@ -41,3 +41,11 @@ services:
 
   MichielRoos\H5p\Backend\EditorController:
     public: true
+    
+  MichielRoos\H5p\Adapter\Editor\EditorAjax:
+    arguments:
+      $libraryRepository: '@MichielRoos\H5p\Domain\Repository\LibraryRepository'
+      $contentTypeCacheEntryRepository: '@MichielRoos\H5p\Domain\Repository\ContentTypeCacheEntryRepository'
+      $libraryTranslationRepository: '@MichielRoos\H5p\Domain\Repository\LibraryTranslationRepository'
+    public: true
+
