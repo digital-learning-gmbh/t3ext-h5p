@@ -19,7 +19,7 @@ class ConfigSetting extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @param string $key
      * @param string $value
      */
-    public function __construct(string $key, string $value)
+    public function __construct(string $key, $value)
     {
         $this->configKey = $key;
         $this->configValue = $value;
