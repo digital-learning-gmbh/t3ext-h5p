@@ -292,6 +292,9 @@ class ViewController extends ActionController
                 'embed'     => false,
                 'copyright' => false,
                 'icon'      => false
+            ],
+            'metadata'       => [
+                'title' => $content->getTitle()
             ]
         ];
 
