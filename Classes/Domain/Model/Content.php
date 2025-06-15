@@ -313,7 +313,7 @@ class Content extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     /**
      * @return bool
      */
-    public function isDisable()
+    public function getDisable()
     {
         return $this->disable;
     }
