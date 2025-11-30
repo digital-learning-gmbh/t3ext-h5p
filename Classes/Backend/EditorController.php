@@ -142,7 +142,7 @@ class EditorController extends ActionController implements SingletonInterface
     /**
      *
      */
-    public function initializeAction()
+    public function initializeAction(): void
     {
         $this->language = ($this->getLanguageService()->lang === 'default') ? 'en' : $this->getLanguageService()->lang;
 
