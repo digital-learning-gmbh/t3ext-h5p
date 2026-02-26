@@ -326,6 +326,7 @@ class H5pModuleController extends ActionController
         $contentRepository = GeneralUtility::makeInstance(ContentRepository::class);
         $content           = $contentRepository->findAll();
 
+
         $paginator  = new QueryResultPaginator($content, $currentPage, $this->itemsPerPage);
         $pagination = new SimplePagination($paginator);
 
@@ -339,7 +340,7 @@ class H5pModuleController extends ActionController
             'h5pContent'              => $content
         ]);
 
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/Index');
     }
 
     /**
@@ -364,7 +365,7 @@ class H5pModuleController extends ActionController
             'paginator'               => $paginator,
             'pagination'              => $pagination,
         ]);
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/Content');
     }
 
     /**
@@ -420,7 +421,7 @@ class H5pModuleController extends ActionController
             'pagination' => $pagination,
         ]);
 
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/Libraries');
     }
 
     /**
@@ -696,7 +697,7 @@ class H5pModuleController extends ActionController
         }
 
         $this->embedEditorScriptsAndStyles();
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/Edit');
     }
 
     /**
@@ -867,68 +868,30 @@ class H5pModuleController extends ActionController
 
         $languageFile = ExtensionManagementUtility::extPath('h5p') . 'Resources/Public/Lib/h5p-editor/language/' . $this->language . '.js';
         if (file_exists($languageFile)) {
-            $paths['h5peditor-editor-language'] = PathUtility::getPublicResourceWebPath('EXT:h5p/Resources/Public/Lib/h5p-editor/language/' . $this->language);
+            $editorLanguagePath = PathUtility::getPublicResourceWebPath('EXT:h5p/Resources/Public/Lib/h5p-editor/language/' . $this->language . '.js');
         } else {
-            $paths['h5peditor-editor-language'] = PathUtility::getPublicResourceWebPath('EXT:h5p/Resources/Public/Lib/h5p-editor/language/en');
+            $editorLanguagePath = PathUtility::getPublicResourceWebPath('EXT:h5p/Resources/Public/Lib/h5p-editor/language/en.js');
         }
 
-        $this->pageRenderer->addRequireJsConfiguration([
-                'paths' => $paths,
-                'shim'  => [
-                    'h5p-jquery'                => [
-                        'exports' => 'h5p-jquery'
-                    ],
-                    'h5peditor-editor'          => [
-                        'deps'    => ['h5p-action-bar'],
-                        'exports' => 'h5peditor-editor'
-                    ],
-                    'h5peditor-init'            => [
-                        'deps'    => ['h5peditor-editor', 'h5peditor-editor-language', 'h5p-display-options'],
-                        'exports' => 'h5peditor-init'
-                    ],
-                    'h5p-content-type'          => [
-                        'deps'    => ['h5p-x-api'],
-                        'exports' => 'h5p-content-type'
-                    ],
-                    'h5p-confirmation-dialog'   => [
-                        'deps'    => ['h5p-content-type'],
-                        'exports' => 'h5p-confirmation-dialog'
-                    ],
-                    'h5p-event-dispatcher'      => [
-                        'deps'    => ['h5p'],
-                        'exports' => 'h5p-event-dispatcher'
-                    ],
-                    'h5p-display-options'       => [
-                        'deps'    => ['h5peditor-editor'],
-                        'exports' => 'h5p-display-options'
-                    ],
-                    'h5p-x-api-event'           => [
-                        'deps'    => ['h5p-event-dispatcher'],
-                        'exports' => 'h5p-x-api-event'
-                    ],
-                    'h5p-x-api'                 => [
-                        'deps'    => ['h5p-x-api-event'],
-                        'exports' => 'h5p-x-api'
-                    ],
-                    'h5peditor-editor-language' => [
-                        'deps'    => ['h5peditor-editor'],
-                        'exports' => 'h5peditor-editor-language'
-                    ],
-                    'h5p-action-bar'            => [
-                        'deps'    => ['h5p-confirmation-dialog'],
-                        'exports' => 'h5p-action-bar'
-                    ],
-                    'h5p'                       => [
-                        'deps'    => ['h5p-jquery'],
-                        'exports' => 'h5p'
-                    ],
-                    'TYPO3/CMS/H5p/editor'      => [
-                        'deps'    => ['h5peditor-init'],
-                        'exports' => 'TYPO3/CMS/H5p/editor'
-                    ],
-                ],
-            ]
-        );
+        // Load H5P core scripts in dependency order (RequireJS removed in TYPO3 13)
+        $scripts = [
+            $webCorePath . 'js/jquery.js',
+            $webCorePath . 'js/h5p.js',
+            $webCorePath . 'js/h5p-event-dispatcher.js',
+            $webCorePath . 'js/h5p-x-api-event.js',
+            $webCorePath . 'js/h5p-x-api.js',
+            $webCorePath . 'js/h5p-content-type.js',
+            $webCorePath . 'js/h5p-confirmation-dialog.js',
+            $webCorePath . 'js/h5p-action-bar.js',
+            $webCorePath . 'js/h5p-display-options.js',
+            $webEditorPath . 'scripts/h5peditor-editor.js',
+            $editorLanguagePath,
+            $webEditorPath . 'scripts/h5peditor-init.js',
+            $webScriptPath . 'editor.js',
+        ];
+        foreach ($scripts as $script) {
+            $this->pageRenderer->addJsFile($script, 'text/javascript', false, false, '', true);
+        }
 
         foreach (H5PCore::$styles as $style) {
             $this->pageRenderer->addCssFile($webCorePath . $style, 'stylesheet', 'all', '', false, false, '', true);
@@ -936,7 +899,6 @@ class H5pModuleController extends ActionController
         foreach (H5peditor::$styles as $style) {
             $this->pageRenderer->addCssFile($webEditorPath . $style, 'stylesheet', 'all', '', false, false, '', true);
         }
-        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/H5p/editor');
     }
 
     /**
@@ -988,7 +950,7 @@ class H5pModuleController extends ActionController
         }
 
         $this->embedEditorScriptsAndStyles();
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/New');
     }
 
     /**
@@ -1066,7 +1028,7 @@ class H5pModuleController extends ActionController
         }
 
         $this->moduleTemplate->assign('content', $content);
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/Show');
     }
 
     /**
@@ -1191,7 +1153,7 @@ class H5pModuleController extends ActionController
      */
     public function errorAction(): ResponseInterface
     {
-        return $this->moduleTemplate->renderResponse();
+        return $this->moduleTemplate->renderResponse('H5pModule/Error');
     }
 
     /**

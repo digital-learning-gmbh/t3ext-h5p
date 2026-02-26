@@ -1,4 +1,4 @@
-define('TYPO3/CMS/H5p/editor', [], function () {
+(function () {
     var ns = H5PEditor;
 
     (function ($) {
@@ -117,4 +117,4 @@ define('TYPO3/CMS/H5p/editor', [], function () {
         $(document).ready(H5PEditor.init);
     })(H5P.jQuery);
 
-});
+})();
