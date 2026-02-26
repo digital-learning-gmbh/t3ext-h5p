@@ -21,7 +21,7 @@ use MichielRoos\H5p\Domain\Repository\ContentResultRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Domain\Repository\FrontendUserRepository;
+use TYPO3\CMS\Extbase\Domain\Model\FrontendUser;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
@@ -32,7 +32,6 @@ class AjaxController extends ActionController
 {
     protected ContentRepository $contentRepository;
     protected ContentResultRepository $contentResultRepository;
-    protected FrontendUserRepository $frontendUserRepository;
     protected PersistenceManager $persistenceManager;
 
     /**
@@ -48,11 +47,6 @@ class AjaxController extends ActionController
     public function injectContentResultRepository(ContentResultRepository $contentResultRepository): void
     {
         $this->contentResultRepository = $contentResultRepository;
-    }
-
-    public function injectFrontendUserRepository(FrontendUserRepository $frontendUserRepository): void
-    {
-        $this->frontendUserRepository = $frontendUserRepository;
     }
 
     public function injectPersistenceManager(PersistenceManager $persistenceManager): void
@@ -91,7 +85,7 @@ class AjaxController extends ActionController
                 return $this->jsonResponse(json_encode($error));
             }
 
-            $frontendUserModel = $this->frontendUserRepository->findByUid((int)$user['uid']);
+            $frontendUserModel = $this->persistenceManager->getObjectByIdentifier((int)$user['uid'], FrontendUser::class);
 
             /** @var ContentResult $existingContentResult */
             $existingContentResult = $this->contentResultRepository->findOneByUserAndContentId($user['uid'], $postData['contentId']);
