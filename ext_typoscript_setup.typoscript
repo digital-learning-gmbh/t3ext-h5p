@@ -27,6 +27,20 @@ plugin.tx_h5p_statistics {
 }
 
 module.tx_h5p_web {
+    view {
+        templateRootPaths {
+            10 = EXT:h5p/Resources/Private/Templates/
+        }
+
+        layoutRootPaths {
+            10 = EXT:h5p/Resources/Private/Layouts/
+        }
+
+        partialRootPaths {
+            10 = EXT:h5p/Resources/Private/Partials/
+        }
+    }
+
     persistence {
         storagePid = 1
     }

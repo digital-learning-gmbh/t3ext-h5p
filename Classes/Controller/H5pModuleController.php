@@ -194,7 +194,7 @@ class H5pModuleController extends ActionController
      */
     protected function initializeView(): void
     {
-        $this->view->assignMultiple([
+        $this->moduleTemplate->assignMultiple([
             'dateFormat' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'],
             'timeFormat' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'],
         ]);
@@ -330,7 +330,7 @@ class H5pModuleController extends ActionController
         $pagination = new SimplePagination($paginator);
 
 
-        $this->view->assignMultiple([
+        $this->moduleTemplate->assignMultiple([
             'action'                  => 'index',
             'paginator'               => $paginator,
             'pagination'              => $pagination,
@@ -339,8 +339,7 @@ class H5pModuleController extends ActionController
             'h5pContent'              => $content
         ]);
 
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -357,7 +356,7 @@ class H5pModuleController extends ActionController
         $paginator  = new QueryResultPaginator($content, $currentPage, $this->itemsPerPage);
         $pagination = new SimplePagination($paginator);
 
-        $this->view->assignMultiple([
+        $this->moduleTemplate->assignMultiple([
             'action'                  => 'content',
             'h5pContentAllowedOnPage' => $this->h5pContentAllowedOnPage,
             'id'                      => $this->id,
@@ -365,8 +364,7 @@ class H5pModuleController extends ActionController
             'paginator'               => $paginator,
             'pagination'              => $pagination,
         ]);
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -415,15 +413,14 @@ class H5pModuleController extends ActionController
         $paginator  = new QueryResultPaginator($libraries, $currentPage, $this->itemsPerPage);
         $pagination = new SimplePagination($paginator);
 
-        $this->view->assignMultiple([
+        $this->moduleTemplate->assignMultiple([
             'action'     => 'libraries',
             'libraries'  => $libraries,
             'paginator'  => $paginator,
             'pagination' => $pagination,
         ]);
 
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -676,13 +673,13 @@ class H5pModuleController extends ActionController
             $contentLibrary = $content->getLibrary();
             if ($contentLibrary instanceof Library) {
                 $contentLibraryArray = $contentLibrary->toAssocArray();
-                $this->view->assign('library',
+                $this->moduleTemplate->assign('library',
                     sprintf('%s %d.%d', $contentLibraryArray['machineName'], $contentLibraryArray['majorVersion'], $contentLibraryArray['minorVersion']));
             }
-            $this->view->assign('content', $content);
+            $this->moduleTemplate->assign('content', $content);
             $parameters     = (array)json_decode($content->getFiltered());
             $displayOptions = $this->h5pCore->getDisplayOptionsForEdit($content->getDisable());
-            $this->view->assign('displayOptions', $displayOptions);
+            $this->moduleTemplate->assign('displayOptions', $displayOptions);
             $parameters = $this->injectMetadataIntoParameters($parameters, $content);
             $parameters = json_encode($parameters, JSON_THROW_ON_ERROR);
             // Unbreak wrongly encoded parameters (Content.php updateFromContentData())
@@ -695,12 +692,11 @@ class H5pModuleController extends ActionController
                 '"slideBackgroundSelector":{}',
                 '"image":{}'
             ], $parameters);
-            $this->view->assign('parameters', $parameters);
+            $this->moduleTemplate->assign('parameters', $parameters);
         }
 
         $this->embedEditorScriptsAndStyles();
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -968,8 +964,8 @@ class H5pModuleController extends ActionController
      */
     public function newAction(int $contentId = 0): ResponseInterface
     {
-        $this->view->assign('didConsent', (int)$this->h5pFramework->getOption('hub_is_enabled') === 1);
-        $this->view->assign('h5pContentAllowedOnPage', $this->h5pContentAllowedOnPage);
+        $this->moduleTemplate->assign('didConsent', (int)$this->h5pFramework->getOption('hub_is_enabled') === 1);
+        $this->moduleTemplate->assign('h5pContentAllowedOnPage', $this->h5pContentAllowedOnPage);
 
         $this->pageRenderer->addJsInlineCode(
             'H5PIntegration',
@@ -986,14 +982,13 @@ class H5pModuleController extends ActionController
             }
             // load JS and CSS requirements
             $contentLibrary = $content->getLibrary()->toAssocArray();
-            $this->view->assign('library',
+            $this->moduleTemplate->assign('library',
                 sprintf('%s %d.%d', $contentLibrary['machineName'], $contentLibrary['majorVersion'], $contentLibrary['minorVersion']));
-            $this->view->assign('parameters', $content->getFiltered());
+            $this->moduleTemplate->assign('parameters', $content->getFiltered());
         }
 
         $this->embedEditorScriptsAndStyles();
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -1070,9 +1065,8 @@ class H5pModuleController extends ActionController
             $this->loadJsAndCss($contentLibrary);
         }
 
-        $this->view->assign('content', $content);
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        $this->moduleTemplate->assign('content', $content);
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**
@@ -1197,8 +1191,7 @@ class H5pModuleController extends ActionController
      */
     public function errorAction(): ResponseInterface
     {
-        $this->moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($this->moduleTemplate->renderContent());
+        return $this->moduleTemplate->renderResponse();
     }
 
     /**

@@ -12,6 +12,7 @@ return [
         'iconIdentifier' => 'h5p-logo',
         'labels'         => 'LLL:EXT:h5p/Resources/Private/Language/BackendModule.xlf',
         'extensionName'  => 'H5p',
+        'packageName'    => 'h5p',
 
         'controllerActions' => [
             H5pModuleController::class => ['content', 'index', 'new', 'edit', 'create', 'libraries', 'show', 'update', 'consent', 'error'],
