@@ -21,7 +21,6 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class EditorController
@@ -121,14 +120,15 @@ class EditorController extends ActionController implements SingletonInterface
                 break;
             case H5PEditorEndpoints::LIBRARY_UPLOAD:
                 $contentId  = $parameters['contentId'];
-                $uploadPath = $_FILES['h5p']['tmp_name'];
+                $uploadedFiles = $request->getUploadedFiles();
+                $uploadPath = $uploadedFiles['h5p']->getStream()->getMetadata('uri');
                 $token      = $parameters['token'] ?? 'dummy';
                 $this->h5pAjaxEditor->action(H5PEditorEndpoints::LIBRARY_UPLOAD, $token, $uploadPath, $contentId);
                 exit;
                 break;
             case H5PEditorEndpoints::FILTER:
                 $token             = $parameters['token'] ?? 'dummy';
-                $libraryParameters = GeneralUtility::_POST('libraryParameters');
+                $libraryParameters = $request->getParsedBody()['libraryParameters'] ?? null;
                 $this->h5pAjaxEditor->action(H5PEditorEndpoints::FILTER, $token, $libraryParameters);
                 exit;
                 break;

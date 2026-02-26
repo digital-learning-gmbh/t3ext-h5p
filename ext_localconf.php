@@ -27,13 +27,13 @@ defined('TYPO3') or die('¯\_(ツ)_/¯');
 );
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'MichielRoos.h5p',
+    'h5p',
     'ajax',
     [
-        'Ajax' => 'index,finish,contentUserData',
+        \MichielRoos\H5p\Controller\AjaxController::class => 'index,finish,contentUserData',
     ],
     [
-        'Ajax' => 'index,finish,contentUserData',
+        \MichielRoos\H5p\Controller\AjaxController::class => 'index,finish,contentUserData',
     ]
 );
 

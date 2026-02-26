@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Localization\LanguageServiceFactory;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Type\ContextualFeedbackSeverity;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Core\Resource\Exception\InvalidFileException;
@@ -48,7 +48,6 @@ use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3Fluid\Fluid\View\ViewInterface;
 
 /**
  * Module 'H5P' for the 'h5p' extension.
@@ -117,7 +116,7 @@ class H5pModuleController extends ActionController
         $this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $this->moduleTemplate->setTitle(LocalizationUtility::translate('LLL:EXT:h5p/Resources/Private/Language/BackendModule.xlf:mlang_tabs_tab'));
 
-        $this->id                         = (int)GeneralUtility::_GP('id');
+        $this->id                         = (int)($this->request->getQueryParams()['id'] ?? $this->request->getParsedBody()['id'] ?? 0);
         $backendUser                      = $this->getBackendUser();
         $this->perms_clause               = $backendUser->getPagePermsClause(1);
         $this->pageRecord                 = BackendUtility::readPageAccess($this->id, $this->perms_clause);
@@ -192,21 +191,17 @@ class H5pModuleController extends ActionController
 
     /**
      * Initialize the view
-     * @param ViewInterface $view The view
-     * @return void
-     * @todo v12: Change signature to TYPO3Fluid\Fluid\View\ViewInterface when extbase ViewInterface is dropped.
-     *
      */
-    public function initializeView(\TYPO3Fluid\Fluid\View\ViewInterface $view): void
+    protected function initializeView(): void
     {
-        $view->assignMultiple([
+        $this->view->assignMultiple([
             'dateFormat' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'],
             'timeFormat' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'],
         ]);
 
         $this->registerDocheaderButtons();
         $this->generateMenu();
-        $this->moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
+        // Flash messages are automatically rendered in TYPO3 13+
     }
 
     /**
@@ -513,7 +508,7 @@ class H5pModuleController extends ActionController
         }
 
         if (strlen($trimmed_title) > 255) {
-            $this->addFlashMessage('Title is too long. Must be 256 letters or shorter.', '', AbstractMessage::ERROR);
+            $this->addFlashMessage('Title is too long. Must be 256 letters or shorter.', '', ContextualFeedbackSeverity::ERROR);
             return new ForwardResponse('new');
         }
 
@@ -526,7 +521,7 @@ class H5pModuleController extends ActionController
             }
             $content['id'] = $this->h5pCore->saveContent($content);
         } catch (\Exception $e) {
-            $this->addFlashMessage($e->getMessage(), $e->getCode(), AbstractMessage::ERROR);
+            $this->addFlashMessage($e->getMessage(), $e->getCode(), ContextualFeedbackSeverity::ERROR);
             return new ForwardResponse('new');
         }
 
@@ -628,7 +623,7 @@ class H5pModuleController extends ActionController
         }
 
         if (strlen($trimmed_title) > 255) {
-            $this->addFlashMessage('Title is too long. Must be 256 letters or shorter.', '', AbstractMessage::ERROR);
+            $this->addFlashMessage('Title is too long. Must be 256 letters or shorter.', '', ContextualFeedbackSeverity::ERROR);
             return new ForwardResponse('new');
         }
 
@@ -639,7 +634,7 @@ class H5pModuleController extends ActionController
             $content['id'] = $contentId;
             $content['id'] = $this->h5pCore->saveContent($content, $contentId);
         } catch (\Exception $e) {
-            $this->addFlashMessage($e->getMessage(), $e->getCode(), AbstractMessage::ERROR);
+            $this->addFlashMessage($e->getMessage(), $e->getCode(), ContextualFeedbackSeverity::ERROR);
             return new ForwardResponse('new');
         }
 
@@ -673,7 +668,7 @@ class H5pModuleController extends ActionController
             $content           = $contentRepository->findByUid($contentId);
 
             if (!$content instanceof Content) {
-                $this->addFlashMessage(sprintf('Content element with id %d not found', $contentId), 'Record not found', AbstractMessage::ERROR);
+                $this->addFlashMessage(sprintf('Content element with id %d not found', $contentId), 'Record not found', ContextualFeedbackSeverity::ERROR);
                 return $this->redirect('error', 'H5pModule', 'h5p');
             }
 
@@ -986,7 +981,7 @@ class H5pModuleController extends ActionController
             $content           = $contentRepository->findByUid($contentId);
 
             if (!$content instanceof Content) {
-                $this->addFlashMessage(sprintf('Content element with id %d not found', $contentId), 'Record not found', AbstractMessage::ERROR);
+                $this->addFlashMessage(sprintf('Content element with id %d not found', $contentId), 'Record not found', ContextualFeedbackSeverity::ERROR);
                 return $this->redirect('error');
             }
             // load JS and CSS requirements
@@ -1013,12 +1008,12 @@ class H5pModuleController extends ActionController
         $content           = $contentRepository->findByUid($contentId);
 
         if (!$content instanceof Content) {
-            $this->addFlashMessage(sprintf('Content element with id %d not found', $contentId), 'Record not found', AbstractMessage::ERROR);
+            $this->addFlashMessage(sprintf('Content element with id %d not found', $contentId), 'Record not found', ContextualFeedbackSeverity::ERROR);
             return new ForwardResponse('error');
         }
 
         if (!$content->getLibrary()) {
-            $this->addFlashMessage('Content element has no H5P library', 'H5P library not found on content', AbstractMessage::ERROR);
+            $this->addFlashMessage('Content element has no H5P library', 'H5P library not found on content', ContextualFeedbackSeverity::ERROR);
             return new ForwardResponse('error');
         }
 

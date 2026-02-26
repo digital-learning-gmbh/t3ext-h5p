@@ -17,6 +17,7 @@ namespace MichielRoos\H5p\Property\TypeConverter;
 use TYPO3\CMS\Core\Resource\File as FalFile;
 use TYPO3\CMS\Core\Resource\FileReference as FalFileReference;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Resource\Security\FileNameValidator;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
@@ -186,7 +187,8 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
      */
     protected function importUploadedResource(array $uploadInfo, PropertyMappingConfigurationInterface $configuration)
     {
-        if (!GeneralUtility::verifyFilenameAgainstDenyPattern($uploadInfo['name'])) {
+        $fileNameValidator = GeneralUtility::makeInstance(FileNameValidator::class);
+        if (!$fileNameValidator->isValid($uploadInfo['name'])) {
             throw new TypeConverterException('Uploading files with PHP file extensions is not allowed!', 1399312430);
         }
 
@@ -194,7 +196,8 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
 
         if ($allowedFileExtensions !== null) {
             $filePathInfo = PathUtility::pathinfo($uploadInfo['name']);
-            if (!GeneralUtility::inList($allowedFileExtensions, strtolower($filePathInfo['extension']))) {
+            $allowedExtensionsList = GeneralUtility::trimExplode(',', $allowedFileExtensions, true);
+            if (!in_array(strtolower($filePathInfo['extension']), $allowedExtensionsList, true)) {
                 throw new TypeConverterException('File extension is not allowed!', 1399312430);
             }
         }
@@ -241,7 +244,7 @@ class UploadedFileReferenceConverter extends AbstractTypeConverter
     {
         if ($resourcePointer === null) {
             /** @var $fileReference \MichielRoos\H5p\Domain\Model\FileReference */
-            $fileReference = $this->objectManager->get(FileReference::class);
+            $fileReference = GeneralUtility::makeInstance(FileReference::class);
         } else {
             $fileReference = $this->persistenceManager->getObjectByIdentifier($resourcePointer, FileReference::class);
         }

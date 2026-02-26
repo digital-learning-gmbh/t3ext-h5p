@@ -13,7 +13,8 @@ namespace MichielRoos\H5p\Domain\Repository;
  *
  * The TYPO3 project - inspiring people to share!
  */
-use TYPO3\CMS\Extbase\Persistence\Generic\QuerySettingsInterface;
+use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
@@ -24,12 +25,11 @@ class PageRepository extends Repository
     /**
      * initializes any required object
      */
-    public function initializeObject()
+    public function initializeObject(): void
     {
-        if ($this->defaultQuerySettings === null) {
-            $this->defaultQuerySettings = $this->objectManager->get(QuerySettingsInterface::class);
-        }
-        $this->defaultQuerySettings->setRespectStoragePage(false);
+        $querySettings = GeneralUtility::makeInstance(Typo3QuerySettings::class);
+        $querySettings->setRespectStoragePage(false);
+        $this->setDefaultQuerySettings($querySettings);
     }
 
     /**

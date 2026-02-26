@@ -14,7 +14,7 @@ $EM_CONF['h5p'] = [
     'version'          => '0.2.23',
     'constraints'      => [
         'depends'      => [
-            'typo3' => '7.0.0-9.5.99',
+            'typo3' => '13.0.0-13.4.99',
         ], 'conflicts' => [],
         'suggests'     => [],
     ],

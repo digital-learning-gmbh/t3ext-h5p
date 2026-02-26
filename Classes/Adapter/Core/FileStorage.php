@@ -61,11 +61,6 @@ class FileStorage implements H5PFileStorage, SingletonInterface
     private $persistenceManager;
 
     /**
-     * @var object|ObjectManager
-     */
-    private $objectManager;
-
-    /**
      * FileStorageService constructor.
      *
      * @param ResourceStorage $storage

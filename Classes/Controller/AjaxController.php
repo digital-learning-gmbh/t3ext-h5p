@@ -18,6 +18,8 @@ use MichielRoos\H5p\Domain\Model\Content;
 use MichielRoos\H5p\Domain\Model\ContentResult;
 use MichielRoos\H5p\Domain\Repository\ContentRepository;
 use MichielRoos\H5p\Domain\Repository\ContentResultRepository;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Repository\FrontendUserRepository;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -28,87 +30,104 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
  */
 class AjaxController extends ActionController
 {
-    /**
-     * Content repository
-     *
-     * @var \MichielRoos\H5p\Domain\Repository\ContentRepository
-     */
-    protected $contentRepository;
+    protected ContentRepository $contentRepository;
+    protected ContentResultRepository $contentResultRepository;
+    protected FrontendUserRepository $frontendUserRepository;
+    protected PersistenceManager $persistenceManager;
 
     /**
      * @var string
      */
     private $language;
 
+    public function injectContentRepository(ContentRepository $contentRepository): void
+    {
+        $this->contentRepository = $contentRepository;
+    }
+
+    public function injectContentResultRepository(ContentResultRepository $contentResultRepository): void
+    {
+        $this->contentResultRepository = $contentResultRepository;
+    }
+
+    public function injectFrontendUserRepository(FrontendUserRepository $frontendUserRepository): void
+    {
+        $this->frontendUserRepository = $frontendUserRepository;
+    }
+
+    public function injectPersistenceManager(PersistenceManager $persistenceManager): void
+    {
+        $this->persistenceManager = $persistenceManager;
+    }
+
     /**
      * Finish action
      */
-    public function finishAction()
+    public function finishAction(): ResponseInterface
     {
         $user = null;
 
         $error = [
-            'message'    => 'Uanble to save result',
+            'message'    => 'Unable to save result',
             'errorCode'  => 'error',
             'statusCode' => 200,
             'details'    => 'No user is logged in'
         ];
 
-        if ($GLOBALS['TSFE']->loginUser) {
-            $user = $GLOBALS['TSFE']->fe_user->user;
-            $postData = GeneralUtility::_POST();
+        $context = GeneralUtility::makeInstance(Context::class);
+        if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
+            $request = $this->request;
+            $frontendUser = $request->getAttribute('frontend.user');
+            $user = $frontendUser->user;
+            $postData = $request->getParsedBody();
             if (!array_key_exists('time', $postData)) {
                 $postData['time'] = 0;
             }
 
-            $contentRepository = $this->objectManager->get(ContentRepository::class);
-
-            $content = $contentRepository->findByUid($postData['contentId']);
+            $content = $this->contentRepository->findByUid($postData['contentId']);
             if (!$content instanceof Content) {
                 $error['details'] = 'Content not found';
                 \H5PCore::ajaxError($error['message'], $error['errorCode'], $error['statusCode'], $error['details']);
-                exit;
+                return $this->jsonResponse(json_encode($error));
             }
 
-            $frontendUserRepository = $this->objectManager->get(FrontendUserRepository::class);
-            $frontendUser = $frontendUserRepository->findByUid((int)$user['uid']);
-
-            $contentResultRepository = $this->objectManager->get(ContentResultRepository::class);
+            $frontendUserModel = $this->frontendUserRepository->findByUid((int)$user['uid']);
 
             /** @var ContentResult $existingContentResult */
-            $existingContentResult = $contentResultRepository->findOneByUserAndContentId($user['uid'], $postData['contentId']);
+            $existingContentResult = $this->contentResultRepository->findOneByUserAndContentId($user['uid'], $postData['contentId']);
             if ($existingContentResult) {
                 $existingContentResult->setScore($postData['score']);
                 $existingContentResult->setMaxScore($postData['maxScore']);
                 $existingContentResult->setOpened($postData['opened']);
                 $existingContentResult->setFinished($postData['finished']);
                 $existingContentResult->setTime($postData['time']);
-                $contentResultRepository->update($existingContentResult);
+                $this->contentResultRepository->update($existingContentResult);
             } else {
-                $contentResult = new ContentResult($content, $frontendUser, (int)$postData['score'], (int)$postData['maxScore'], (int)$postData['opened'], (int)$postData['finished'], (int)$postData['time']);
-                $contentResult->setPid($GLOBALS['TSFE']->id);
-                $contentResultRepository->add($contentResult);
+                $pageId = (int)($request->getAttribute('routing')?->getPageId() ?? 0);
+                $contentResult = new ContentResult($content, $frontendUserModel, (int)$postData['score'], (int)$postData['maxScore'], (int)$postData['opened'], (int)$postData['finished'], (int)$postData['time']);
+                $contentResult->setPid($pageId);
+                $this->contentResultRepository->add($contentResult);
             }
-            $persistenceManager = $this->objectManager->get(PersistenceManager::class);
-            $persistenceManager->persistAll();
+            $this->persistenceManager->persistAll();
             \H5PCore::ajaxSuccess();
-            exit;
+            return $this->jsonResponse(json_encode(['success' => true]));
         }
         \H5PCore::ajaxError($error['message'], $error['errorCode'], $error['statusCode'], $error['details']);
-        exit;
+        return $this->jsonResponse(json_encode($error));
     }
 
     /**
-     * Finish action
+     * Content user data action
      */
-    public function contentUserDataAction()
+    public function contentUserDataAction(): ResponseInterface
     {
+        return $this->jsonResponse(json_encode([]));
     }
 
     /**
      * Returns an instance of LanguageService
      *
-     * @return \TYPO3\CMS\Lang\LanguageService
+     * @return \TYPO3\CMS\Core\Localization\LanguageService
      */
     protected function getLanguageService()
     {

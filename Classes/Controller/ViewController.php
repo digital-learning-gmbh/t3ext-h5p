@@ -72,7 +72,7 @@ class ViewController extends ActionController
      */
     public function initializeAction(): void
     {
-        $this->contentObjectRenderer = $this->configurationManager->getContentObject();
+        $this->contentObjectRenderer = $this->request->getAttribute('currentContentObject');
 
         $this->language = ($this->getLanguageService()->lang === 'default') ? 'en' : $this->getLanguageService()->lang;
 
@@ -230,7 +230,8 @@ class ViewController extends ActionController
         
 
         if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
-            $user = $GLOBALS['TSFE']->fe_user->user;
+            $frontendUser = $this->request->getAttribute('frontend.user');
+            $user = $frontendUser->user;
 
             $name = $user['first_name'];
             if ($user['middle_name']) {
@@ -391,7 +392,8 @@ class ViewController extends ActionController
             return $this->htmlResponse(null);
         }
 
-        $user = $GLOBALS['TSFE']->fe_user->user;
+        $frontendUser = $this->request->getAttribute('frontend.user');
+        $user = $frontendUser->user;
 
         $statistics = $this->contentResultRepository->findByUser((int)$user['uid']);
         if (!$statistics) {

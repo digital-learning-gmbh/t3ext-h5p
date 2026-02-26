@@ -31,7 +31,7 @@ $iconRegistry->registerIcon(
     ['source' => 'EXT:h5p/Resources/Public/Icon/h5p.gif']
 );
 
-ExtensionManagementUtility::addPageTSConfig('<INCLUDE_TYPOSCRIPT: source="FILE:EXT:h5p/Configuration/TsConfig/ContentElementWizard.ts">');
+// Page TSconfig is now loaded via Configuration/page.tsconfig (TYPO3 13+)
 
 call_user_func(
     function ($extKey) {

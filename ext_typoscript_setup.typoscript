@@ -1,28 +1,3 @@
-config.tx_extbase {
-    persistence {
-        classes {
-            MichielRoos\H5p\Domain\Model\Page {
-                mapping {
-                    tableName = pages
-                }
-            }
-
-            MichielRoos\H5p\Domain\Model\FileReference {
-                mapping {
-                    tableName = sys_file_reference
-                    columns {
-                        uid_local.mapOnProperty = originalFileIdentifier
-                    }
-                }
-            }
-        }
-    }
-
-    objects {
-        TYPO3\CMS\Extbase\Domain\Model\FileReference.className = MichielRoos\H5p\Domain\Model\FileReference
-    }
-}
-
 plugin.tx_h5p_view {
     view {
         templateRootPaths {
