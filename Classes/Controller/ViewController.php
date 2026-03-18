@@ -150,7 +150,7 @@ class ViewController extends ActionController
             'H5PIntegration.contents[\'cid-' . $content->getUid() . '\'] = ' . json_encode($contentSettings) . ';'
         );
 
-        if ($content->getEmbedType() !== 'iframe') {
+        if ($content->getEmbedType() !== 'iframe' && $content->getLibrary() !== null) {
             // load JS and CSS requirements
             $contentLibrary = $content->getLibrary()->toAssocArray();
 
@@ -229,23 +229,31 @@ class ViewController extends ActionController
         ];
         
 
-        if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
+        try {
+            $isLoggedIn = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn');
+        } catch (AspectNotFoundException $e) {
+            $isLoggedIn = false;
+        }
+
+        if ($isLoggedIn) {
             $frontendUser = $this->request->getAttribute('frontend.user');
-            $user = $frontendUser->user;
+            $user = $frontendUser->user ?? null;
 
-            $name = $user['first_name'];
-            if ($user['middle_name']) {
-                $name .= ' ' . $user ['middle_name'];
-            }
-            if ($user['last_name']) {
-                $name .= ' ' . $user ['last_name'];
-            }
+            if ($user) {
+                $name = $user['first_name'] ?? '';
+                if (!empty($user['middle_name'])) {
+                    $name .= ' ' . $user['middle_name'];
+                }
+                if (!empty($user['last_name'])) {
+                    $name .= ' ' . $user['last_name'];
+                }
 
-            $settings['user']               = [
-                'name' => $name,
-                'mail' => $user['email']
-            ];
-            $settings['postUserStatistics'] = $this->h5pFramework->getOption('track_user') && (bool)$user['uid'];
+                $settings['user']               = [
+                    'name' => $name,
+                    'mail' => $user['email'] ?? ''
+                ];
+                $settings['postUserStatistics'] = $this->h5pFramework->getOption('track_user') && (bool)($user['uid'] ?? 0);
+            }
         }
 
         $relativeCorePath = PathUtility::getPublicResourceWebPath('EXT:h5p/Resources/Public/Lib/h5p-core/');
@@ -271,15 +279,21 @@ class ViewController extends ActionController
      */
     public function getContentSettings(Content $content): array
     {
+        $library = $content->getLibrary();
+        $libraryString = '';
+        if ($library !== null) {
+            $libraryString = sprintf(
+                '%s %d.%d.%d',
+                $library->getMachineName(),
+                $library->getMajorVersion(),
+                $library->getMinorVersion(),
+                $library->getPatchVersion()
+            );
+        }
+
         $settings = [
             'url'            => '/fileadmin/h5p',
-            'library'        => sprintf(
-                '%s %d.%d.%d',
-                $content->getLibrary()->getMachineName(),
-                $content->getLibrary()->getMajorVersion(),
-                $content->getLibrary()->getMinorVersion(),
-                $content->getLibrary()->getPatchVersion()
-            ),
+            'library'        => $libraryString,
             'jsonContent'    => $content->getFiltered(),
             'fullScreen'     => false,
             'exportUrl'      => '/path/to/download.h5p',
@@ -299,8 +313,8 @@ class ViewController extends ActionController
             ]
         ];
 
-        if ($content->getEmbedType() === 'iframe') {
-            $contentLibrary    = $content->getLibrary()->toAssocArray();
+        if ($content->getEmbedType() === 'iframe' && $library !== null) {
+            $contentLibrary    = $library->toAssocArray();
             $dependencyLibrary = $this->h5pCore->loadLibrary($contentLibrary['machineName'], $contentLibrary['majorVersion'], $contentLibrary['minorVersion']);
             $this->h5pCore->findLibraryDependencies($dependencies, $dependencyLibrary);
             if (is_array($dependencies)) {
@@ -387,13 +401,24 @@ class ViewController extends ActionController
      */
     public function statisticsAction(): ResponseInterface
     {
-        if (!GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
+        try {
+            $isLoggedIn = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn');
+        } catch (AspectNotFoundException $e) {
+            $isLoggedIn = false;
+        }
+
+        if (!$isLoggedIn) {
             $this->view->assign('notLoggedIn', true);
             return $this->htmlResponse(null);
         }
 
         $frontendUser = $this->request->getAttribute('frontend.user');
-        $user = $frontendUser->user;
+        $user = $frontendUser->user ?? null;
+
+        if (!$user) {
+            $this->view->assign('notLoggedIn', true);
+            return $this->htmlResponse(null);
+        }
 
         $statistics = $this->contentResultRepository->findByUser((int)$user['uid']);
         if (!$statistics) {

@@ -31,19 +31,14 @@ defined('TYPO3') or die('¯\_(ツ)_/¯');
             'label'   => 'LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_content',
             'config'  => [
                 'type'          => 'group',
-                'internal_type' => 'db',
-                'rootLevel'     => true,
                 'allowed'       => 'tx_h5p_domain_model_content',
-                'items'         => [
-                    ['', 0]
-                ],
                 'default'       => 0,
                 'size'          => 1,
                 'minitems'      => 0,
                 'maxitems'      => 1,
-                'wizards'       => [
-                    'suggest' => [
-                        'type' => 'suggest',
+                'suggestOptions' => [
+                    'default' => [
+                        'additionalSearchFields' => 'title',
                     ]
                 ]
             ]
@@ -54,11 +49,11 @@ defined('TYPO3') or die('¯\_(ツ)_/¯');
             'config'  => [
                 'type'    => 'check',
                 'items'   => [
-                    ['LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.0', ''], // 1
-                    ['LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.1', ''], // 2
-                    ['LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.2', ''], // 4
-                    ['LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.3', ''], // 8
-                    ['LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.4', ''], // 16
+                    ['label' => 'LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.0'], // 1
+                    ['label' => 'LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.1'], // 2
+                    ['label' => 'LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.2'], // 4
+                    ['label' => 'LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.3'], // 8
+                    ['label' => 'LLL:EXT:h5p/Resources/Private/Language/Tca.xlf:tt_content.tx_h5p_display_options.I.4'], // 16
                 ],
                 'cols'    => 2,
                 'default' => \H5PCore::DISABLE_FRAME + \H5PCore::DISABLE_COPYRIGHT // 1 + 8
