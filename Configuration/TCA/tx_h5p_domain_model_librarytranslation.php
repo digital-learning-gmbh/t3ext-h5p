@@ -29,9 +29,12 @@ return [
             'exclude' => 0,
             'label'   => 'LLL:EXT:h5p/Resources/Private/Language/locallang.xlf:tx_h5p_domain_model_librarytranslation.library',
             'config'  => [
-                'type' => 'input',
-                'size' => 80,
-                'eval' => 'trim',
+                'type'          => 'select',
+                'renderType'    => 'selectSingle',
+                'foreign_table' => 'tx_h5p_domain_model_library',
+                'default'       => 0,
+                'minitems'      => 0,
+                'maxitems'      => 1,
             ]
         ],
         'language_code' => [
