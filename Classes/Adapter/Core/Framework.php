@@ -1530,4 +1530,13 @@ public function getLibraryFileUrl($libraryFolderName, $fileName): ?string
     {
         // Temporäre leere Implementierung
     }
+
+    /**
+     * Reset hub organization data.
+     * Required by newer versions of H5PFrameworkInterface.
+     */
+    public function resetHubOrganizationData(): void
+    {
+        // Not implemented
+    }
 }
